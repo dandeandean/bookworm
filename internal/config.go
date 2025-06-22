@@ -1,31 +1,16 @@
-package config
+package internal
 
 import (
 	"errors"
 	"os"
 
-	. "github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
 	ViperInstance *viper.Viper
-	BookMarks     []BookMark `mapstructure:"bookmarks"`
-	LastOpened    string     `mapstructure:"lastopened"`
-}
-
-func (c *Config) NewBookMark(name string, link string) {
-	c.BookMarks = append(c.BookMarks,
-		BookMark{
-			Name: name,
-			Link: link,
-		},
-	)
-	c.ViperInstance.Set("bookmarks", c.BookMarks)
-	err := c.ViperInstance.WriteConfig()
-	if err != nil {
-		panic(err)
-	}
+	BookMarks     map[string]BookMark `mapstructure:"bookmarks"`
+	LastOpened    string              `mapstructure:"lastopened"`
 }
 
 func GetConfig() *Config {
