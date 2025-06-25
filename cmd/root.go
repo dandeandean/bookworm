@@ -26,8 +26,11 @@ var openCmd = &cobra.Command{
 			fmt.Println("Couldn't Find BookMark!")
 			return
 		}
+		err := OpenURL(bm.Link)
+		if err != nil {
+			panic(err)
+		}
 		Bw.SetLastOpened(bm)
-		OpenURL(bm.Link)
 	},
 }
 
