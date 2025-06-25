@@ -21,12 +21,13 @@ var openCmd = &cobra.Command{
 	Short: "Open a Bookmark.",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		url, ok := Bw.Cfg.BookMarks[args[0]]
+		bm, ok := Bw.Cfg.BookMarks[args[0]]
 		if !ok {
 			fmt.Println("Couldn't Find BookMark!")
 			return
 		}
-		OpenURL(url.Link)
+		Bw.SetLastOpened(bm)
+		OpenURL(bm.Link)
 	},
 }
 
@@ -35,6 +36,9 @@ var makeCmd = &cobra.Command{
 	Short: "Make New Bookmarks.",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
+		if !IsValidUrl(args[1]) {
+			fmt.Println(args[1] + " is not a valid URL. What are you doing?")
+		}
 		Bw.NewBookMark(args[0], args[1])
 	},
 }

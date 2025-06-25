@@ -25,6 +25,15 @@ func (b BookMark) Println() {
 	fmt.Println("| " + b.Link)
 }
 
+func (w *BookWorm) SetLastOpened(bm BookMark) {
+	w.Cfg.LastOpened = bm.Link
+	w.Cfg.ViperInstance.Set("lastopened", bm.Link)
+	err := w.Cfg.ViperInstance.WriteConfig()
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (w *BookWorm) NewBookMark(name string, link string) {
 	w.Cfg.BookMarks[name] = BookMark{
 		Name: name,

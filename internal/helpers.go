@@ -43,3 +43,8 @@ func isWSL() bool {
 	}
 	return strings.Contains(strings.ToLower(string(releaseData)), "microsoft")
 }
+
+func IsValidUrl(url string) bool {
+	return strings.Contains(url, "https://") ||
+		strings.Contains(url, "http://")
+}
