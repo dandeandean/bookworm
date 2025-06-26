@@ -36,6 +36,7 @@ func OpenURL(url string) error {
 }
 
 // isWSL checks if the Go program is running inside Windows Subsystem for Linux
+// From https://gist.github.com/sevkin/9798d67b2cb9d07cb05f89f14ba682f8
 func isWSL() bool {
 	releaseData, err := exec.Command("uname", "-r").Output()
 	if err != nil {
@@ -44,6 +45,7 @@ func isWSL() bool {
 	return strings.Contains(strings.ToLower(string(releaseData)), "microsoft")
 }
 
+// This is going to need a lot of work
 func IsValidUrl(url string) bool {
 	return strings.Contains(url, "https://") ||
 		strings.Contains(url, "http://")

@@ -14,12 +14,14 @@ var (
 func init() {
 	rootCmd.AddCommand(makeCmd)
 	rootCmd.AddCommand(openCmd)
+	rootCmd.AddCommand(listCmd)
 }
 
 var openCmd = &cobra.Command{
-	Use:   "open",
-	Short: "Open a Bookmark.",
-	Args:  cobra.ExactArgs(1),
+	Use:     "open",
+	Short:   "Open a Bookmark.",
+	Aliases: []string{"go"},
+	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		bm, ok := Bw.Cfg.BookMarks[args[0]]
 		if !ok {
@@ -35,9 +37,10 @@ var openCmd = &cobra.Command{
 }
 
 var makeCmd = &cobra.Command{
-	Use:   "make",
-	Short: "Make New Bookmarks.",
-	Args:  cobra.ExactArgs(2),
+	Use:     "make",
+	Short:   "Make New Bookmarks.",
+	Args:    cobra.ExactArgs(2),
+	Aliases: []string{"mk", "new"},
 	Run: func(cmd *cobra.Command, args []string) {
 		if !IsValidUrl(args[1]) {
 			fmt.Println(args[1] + " is not a valid URL. What are you doing?")
@@ -49,6 +52,16 @@ var makeCmd = &cobra.Command{
 var rootCmd = &cobra.Command{
 	Use:   "bookworm",
 	Short: "Bookworm Can Manage Your Bookmarks.",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("Bookworm!")
+	},
+}
+
+var listCmd = &cobra.Command{
+	Use:     "list",
+	Args:    cobra.ExactArgs(0),
+	Short:   "Bookworm Can Manage Your Bookmarks.",
+	Aliases: []string{"ls"},
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, b := range Bw.Cfg.BookMarks {
 			b.Println()
