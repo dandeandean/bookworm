@@ -15,6 +15,7 @@ func init() {
 	rootCmd.AddCommand(makeCmd)
 	rootCmd.AddCommand(openCmd)
 	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(delCmd)
 }
 
 var openCmd = &cobra.Command{
@@ -47,6 +48,17 @@ var makeCmd = &cobra.Command{
 		}
 		Bw.NewBookMark(args[0], args[1], []string{})
 	},
+}
+
+var delCmd = &cobra.Command{
+	Use:     "delete",
+	Short:   "Delete No Good Bookmarks.",
+	Args:    cobra.ExactArgs(1),
+	Aliases: []string{"rm"},
+	Run: func(cmd *cobra.Command, args []string) {
+		Bw.DeleteBookMark(args[0])
+	},
+	ValidArgsFunction: getNamesCmp,
 }
 
 var rootCmd = &cobra.Command{

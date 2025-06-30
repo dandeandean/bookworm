@@ -47,3 +47,13 @@ func (w *BookWorm) NewBookMark(name string, link string, tags []string) {
 		panic(err)
 	}
 }
+
+func (w *BookWorm) DeleteBookMark(name string) {
+	w.Cfg.BookMarks[name] = BookMark{}
+	delete(w.Cfg.BookMarks, name)
+	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
+	err := w.Cfg.ViperInstance.WriteConfig()
+	if err != nil {
+		panic(err)
+	}
+}
