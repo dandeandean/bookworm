@@ -34,8 +34,8 @@ var openCmd = &cobra.Command{
 		}
 		Bw.SetLastOpened(bm)
 	},
+	ValidArgsFunction: getNamesCmp,
 }
-
 var makeCmd = &cobra.Command{
 	Use:     "make",
 	Short:   "Make New Bookmarks.",
