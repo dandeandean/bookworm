@@ -9,8 +9,9 @@ type BookWorm struct {
 }
 
 type BookMark struct {
-	Name string `mapstructure:"name"`
-	Link string `mapstructure:"link"`
+	Name string   `mapstructure:"name"`
+	Link string   `mapstructure:"link"`
+	Tags []string `mapstructure:"tags"`
 }
 
 func Init() *BookWorm {
@@ -21,7 +22,7 @@ func Init() *BookWorm {
 }
 
 func (b BookMark) Println() {
-	fmt.Println("######### " + b.Name + " #########")
+	fmt.Println("#########(" + b.Name + ")#########")
 	fmt.Println("| " + b.Link)
 }
 
@@ -34,10 +35,11 @@ func (w *BookWorm) SetLastOpened(bm BookMark) {
 	}
 }
 
-func (w *BookWorm) NewBookMark(name string, link string) {
+func (w *BookWorm) NewBookMark(name string, link string, tags []string) {
 	w.Cfg.BookMarks[name] = BookMark{
 		Name: name,
 		Link: link,
+		Tags: tags,
 	}
 	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
 	err := w.Cfg.ViperInstance.WriteConfig()

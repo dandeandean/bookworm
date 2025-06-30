@@ -45,7 +45,7 @@ var makeCmd = &cobra.Command{
 		if !IsValidUrl(args[1]) {
 			fmt.Println(args[1] + " is not a valid URL. What are you doing?")
 		}
-		Bw.NewBookMark(args[0], args[1])
+		Bw.NewBookMark(args[0], args[1], []string{})
 	},
 }
 
@@ -57,6 +57,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// Inspo `gh repo list`
 var listCmd = &cobra.Command{
 	Use:     "list",
 	Args:    cobra.ExactArgs(0),
