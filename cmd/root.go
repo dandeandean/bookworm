@@ -19,10 +19,11 @@ func init() {
 }
 
 var openCmd = &cobra.Command{
-	Use:     "open",
-	Short:   "Open a Bookmark.",
-	Aliases: []string{"go"},
-	Args:    cobra.ExactArgs(1),
+	Use:               "open",
+	Short:             "Open a Bookmark.",
+	Aliases:           []string{"go"},
+	Args:              cobra.ExactArgs(1),
+	ValidArgsFunction: getNamesCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		bm, ok := Bw.Cfg.BookMarks[args[0]]
 		if !ok {
@@ -35,13 +36,13 @@ var openCmd = &cobra.Command{
 		}
 		Bw.SetLastOpened(bm)
 	},
-	ValidArgsFunction: getNamesCmp,
 }
 var makeCmd = &cobra.Command{
-	Use:     "make",
-	Short:   "Make New Bookmarks.",
-	Args:    cobra.ExactArgs(2),
-	Aliases: []string{"mk", "new"},
+	Use:               "make",
+	Short:             "Make New Bookmarks.",
+	Args:              cobra.ExactArgs(2),
+	Aliases:           []string{"mk", "new"},
+	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !IsValidUrl(args[1]) {
 			fmt.Println(args[1] + " is not a valid URL. What are you doing?")
@@ -51,14 +52,14 @@ var makeCmd = &cobra.Command{
 }
 
 var delCmd = &cobra.Command{
-	Use:     "delete",
-	Short:   "Delete No Good Bookmarks.",
-	Args:    cobra.ExactArgs(1),
-	Aliases: []string{"rm"},
+	Use:               "delete",
+	Short:             "Delete No Good Bookmarks.",
+	Args:              cobra.ExactArgs(1),
+	Aliases:           []string{"rm"},
+	ValidArgsFunction: getNamesCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		Bw.DeleteBookMark(args[0])
 	},
-	ValidArgsFunction: getNamesCmp,
 }
 
 var rootCmd = &cobra.Command{
@@ -80,6 +81,7 @@ var listCmd = &cobra.Command{
 			b.Println()
 		}
 	},
+	ValidArgsFunction: nonCmp,
 }
 
 func Execute() {
