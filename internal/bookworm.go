@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -22,8 +23,10 @@ func Init() *BookWorm {
 }
 
 func (b BookMark) Println() {
-	fmt.Println("#########(" + b.Name + ")#########")
-	fmt.Println("| " + b.Link)
+	fmt.Println(b.Name + ": " + b.Link)
+	if len(b.Tags) != 0 {
+		fmt.Println(b.Tags)
+	}
 }
 
 func (w *BookWorm) SetLastOpened(bm BookMark) {
@@ -35,8 +38,23 @@ func (w *BookWorm) SetLastOpened(bm BookMark) {
 	}
 }
 
+func (w *BookWorm) SetTags(name string, tags []string) error {
+	bm, ok := w.Cfg.BookMarks[name]
+	if !ok {
+		return errors.New("Bookmark not in mealhouse")
+	}
+	bm.Tags = append(bm.Tags, tags...)
+	// Rewriting all of the bookmarks each time is not great
+	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
+	err := w.Cfg.ViperInstance.WriteConfig()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (w *BookWorm) NewBookMark(name string, link string, tags []string) {
-	w.Cfg.BookMarks[name] = BookMark{
+	w.Cfg.BookMarks[name] = &BookMark{
 		Name: name,
 		Link: link,
 		Tags: tags,
@@ -49,7 +67,7 @@ func (w *BookWorm) NewBookMark(name string, link string, tags []string) {
 }
 
 func (w *BookWorm) DeleteBookMark(name string) {
-	w.Cfg.BookMarks[name] = BookMark{}
+	w.Cfg.BookMarks[name] = &BookMark{}
 	delete(w.Cfg.BookMarks, name)
 	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
 	err := w.Cfg.ViperInstance.WriteConfig()

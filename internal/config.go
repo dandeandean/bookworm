@@ -9,8 +9,8 @@ import (
 
 type Config struct {
 	ViperInstance *viper.Viper
-	BookMarks     map[string]BookMark `mapstructure:"bookmarks"`
-	LastOpened    string              `mapstructure:"lastopened"`
+	BookMarks     map[string]*BookMark `mapstructure:"bookmarks"`
+	LastOpened    string               `mapstructure:"lastopened"`
 }
 
 func GetConfig() *Config {

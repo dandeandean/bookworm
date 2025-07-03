@@ -16,6 +16,7 @@ func init() {
 	rootCmd.AddCommand(openCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(delCmd)
+	rootCmd.AddCommand(tagCmd)
 }
 
 var openCmd = &cobra.Command{
@@ -34,12 +35,12 @@ var openCmd = &cobra.Command{
 		if err != nil {
 			panic(err)
 		}
-		Bw.SetLastOpened(bm)
+		Bw.SetLastOpened(*bm)
 	},
 }
 var makeCmd = &cobra.Command{
 	Use:               "make",
-	Short:             "Make New Bookmarks.",
+	Short:             "Make new bookmarks.",
 	Args:              cobra.ExactArgs(2),
 	Aliases:           []string{"mk", "new"},
 	ValidArgsFunction: nonCmp,
@@ -53,7 +54,7 @@ var makeCmd = &cobra.Command{
 
 var delCmd = &cobra.Command{
 	Use:               "delete",
-	Short:             "Delete No Good Bookmarks.",
+	Short:             "Delete no good bookmarks.",
 	Args:              cobra.ExactArgs(1),
 	Aliases:           []string{"rm"},
 	ValidArgsFunction: getNamesCmp,
@@ -64,7 +65,7 @@ var delCmd = &cobra.Command{
 
 var rootCmd = &cobra.Command{
 	Use:   "bookworm",
-	Short: "Bookworm Can Manage Your Bookmarks.",
+	Short: "Bookworm can manage your bookmarks from the command line.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Bookworm!")
 	},
@@ -72,16 +73,29 @@ var rootCmd = &cobra.Command{
 
 // Inspo `gh repo list`
 var listCmd = &cobra.Command{
-	Use:     "list",
-	Args:    cobra.ExactArgs(0),
-	Short:   "Bookworm Can Manage Your Bookmarks.",
-	Aliases: []string{"ls"},
+	Use:               "list",
+	Args:              cobra.ExactArgs(0),
+	Short:             "List your bookmarks.",
+	Aliases:           []string{"ls"},
+	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, b := range Bw.Cfg.BookMarks {
 			b.Println()
 		}
 	},
-	ValidArgsFunction: nonCmp,
+}
+
+var tagCmd = &cobra.Command{
+	Use:               "tag name tags...",
+	Args:              cobra.MinimumNArgs(2),
+	Short:             "Tag boomarks with tags.",
+	ValidArgsFunction: getNamesCmp,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := Bw.SetTags(args[0], args[1:])
+		if err != nil {
+			fmt.Println(err)
+		}
+	},
 }
 
 func Execute() {
