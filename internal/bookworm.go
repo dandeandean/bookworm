@@ -22,20 +22,24 @@ func Init() *BookWorm {
 	}
 }
 
+func (w *BookWorm) RegisterConfig() error {
+	// This is a little janky, but oh well
+	go w.Cfg.ViperInstance.WriteConfig()
+	return nil
+}
+
 func (b BookMark) Println() {
 	fmt.Println(b.Name + ": " + b.Link)
 	if len(b.Tags) != 0 {
+		fmt.Print(" ")
 		fmt.Println(b.Tags)
 	}
 }
 
-func (w *BookWorm) SetLastOpened(bm BookMark) {
+func (w *BookWorm) SetLastOpened(bm BookMark) error {
 	w.Cfg.LastOpened = bm.Link
 	w.Cfg.ViperInstance.Set("lastopened", bm.Link)
-	err := w.Cfg.ViperInstance.WriteConfig()
-	if err != nil {
-		panic(err)
-	}
+	return w.RegisterConfig()
 }
 
 func (w *BookWorm) SetTags(name string, tags []string) error {
@@ -46,32 +50,22 @@ func (w *BookWorm) SetTags(name string, tags []string) error {
 	bm.Tags = append(bm.Tags, tags...)
 	// Rewriting all of the bookmarks each time is not great
 	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
-	err := w.Cfg.ViperInstance.WriteConfig()
-	if err != nil {
-		return err
-	}
-	return nil
+	return w.RegisterConfig()
 }
 
-func (w *BookWorm) NewBookMark(name string, link string, tags []string) {
+func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
 	w.Cfg.BookMarks[name] = &BookMark{
 		Name: name,
 		Link: link,
 		Tags: tags,
 	}
 	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
-	err := w.Cfg.ViperInstance.WriteConfig()
-	if err != nil {
-		panic(err)
-	}
+	return w.RegisterConfig()
 }
 
-func (w *BookWorm) DeleteBookMark(name string) {
+func (w *BookWorm) DeleteBookMark(name string) error {
 	w.Cfg.BookMarks[name] = &BookMark{}
 	delete(w.Cfg.BookMarks, name)
 	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
-	err := w.Cfg.ViperInstance.WriteConfig()
-	if err != nil {
-		panic(err)
-	}
+	return w.RegisterConfig()
 }
