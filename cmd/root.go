@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"slices"
 
 	. "github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
@@ -11,12 +12,17 @@ var (
 	Bw = Init()
 )
 
+var tagFilter string
+
 func init() {
 	rootCmd.AddCommand(makeCmd)
 	rootCmd.AddCommand(openCmd)
 	rootCmd.AddCommand(listCmd)
 	rootCmd.AddCommand(delCmd)
 	rootCmd.AddCommand(tagCmd)
+
+	listCmd.PersistentFlags().StringVarP(&tagFilter, "tag", "t", "", "tag filter exact match")
+	listCmd.RegisterFlagCompletionFunc("tag", getTagsCmp)
 }
 
 var openCmd = &cobra.Command{
@@ -80,7 +86,9 @@ var listCmd = &cobra.Command{
 	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, b := range Bw.Cfg.BookMarks {
-			b.Println()
+			if tagFilter == "" || slices.Contains(b.Tags, tagFilter) {
+				b.Println()
+			}
 		}
 	},
 }
