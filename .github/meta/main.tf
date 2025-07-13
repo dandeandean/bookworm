@@ -7,7 +7,10 @@ resource "github_repository" "bookworm_repo" {
   has_projects  = true
 }
 
-import {
-  to = github_repository.bookworm_repo
-  id = "bookworm"
+resource "github_branch_protection" "main_branch_protection" {
+  count            = github_repository.bookworm_repo.visibility == "private" ? 0 : 1
+  repository_id    = github_repository.bookworm_repo.node_id
+  pattern          = "main"
+  enforce_admins   = true
+  allows_deletions = false
 }
