@@ -6,6 +6,7 @@ on:
     paths:
     - '!**.md'
     - '!**.yml'
+    - '!**.tf'
   pull_request:
     branches: [ "main" ]
 
