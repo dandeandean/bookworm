@@ -54,7 +54,10 @@ var makeCmd = &cobra.Command{
 		if !IsValidUrl(args[1]) {
 			fmt.Println(args[1] + " is not a valid URL. What are you doing?")
 		}
-		Bw.NewBookMark(args[0], args[1], []string{})
+		err := Bw.NewBookMark(args[0], args[1], []string{})
+		if err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 

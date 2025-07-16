@@ -24,8 +24,7 @@ func Init() *BookWorm {
 
 func (w *BookWorm) RegisterConfig() error {
 	// This is a little janky, but oh well
-	go w.Cfg.ViperInstance.WriteConfig()
-	return nil
+	return w.Cfg.ViperInstance.WriteConfig()
 }
 
 func (b BookMark) Println() {
