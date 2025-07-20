@@ -2,16 +2,22 @@ package cmd
 
 import (
 	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/dandeandean/bookworm/internal"
 )
 
 type model struct {
-	choices  []string         // items on the to-do list
-	cursor   int              // which to-do list item our cursor is pointing at
-	selected map[int]struct{} // which to-do items are selected
+	choices  []internal.BookMark // items on the to-do list
+	cursor   int                 // which to-do list item our cursor is pointing at
+	selected map[int]struct{}    // which to-do items are selected
 }
 
-func modelFrom(choices []string) model {
+func TeaModel() model {
+	choices := make([]internal.BookMark, 0)
+	for _, bm := range Bw.Cfg.BookMarks {
+		choices = append(choices, *bm)
+	}
 	return model{
 		choices:  choices,
 		selected: make(map[int]struct{}),
@@ -25,7 +31,7 @@ func (m model) Init() tea.Cmd {
 
 func (m model) View() string {
 	// The header
-	s := "Bookmarks?\n\n"
+	s := "Bookmarks\n\n"
 
 	// Iterate over our choices
 	for i, choice := range m.choices {
@@ -43,7 +49,7 @@ func (m model) View() string {
 		}
 
 		// Render the row
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
+		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice.Name)
 	}
 
 	// The footer
@@ -52,6 +58,7 @@ func (m model) View() string {
 	// Send the UI for rendering
 	return s
 }
+
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
@@ -85,6 +92,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				delete(m.selected, m.cursor)
 			} else {
 				m.selected[m.cursor] = struct{}{}
+				internal.OpenURL(m.choices[m.cursor].Link)
+				return m, tea.Quit
 			}
 		}
 	}
