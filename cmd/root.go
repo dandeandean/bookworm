@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var (
@@ -16,7 +18,12 @@ var rootCmd = &cobra.Command{
 	Use:   "bookworm",
 	Short: "Bookworm can manage your bookmarks from the command line.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Bookworm!")
+		m := TeaModel()
+		p := tea.NewProgram(m)
+		if _, err := p.Run(); err != nil {
+			fmt.Printf("Alas, there's been an error: %v", err)
+			os.Exit(1)
+		}
 	},
 }
 

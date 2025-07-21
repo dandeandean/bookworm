@@ -28,10 +28,6 @@ var listCmd = &cobra.Command{
 		// 		b.Println()
 		// 	}
 		// }
-		choices := make([]string, 0, len(Bw.Cfg.BookMarks))
-		for k := range Bw.Cfg.BookMarks {
-			choices = append(choices, k)
-		}
 		m := TeaModel()
 		p := tea.NewProgram(m)
 		if _, err := p.Run(); err != nil {
