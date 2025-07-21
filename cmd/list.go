@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
-	tea "github.com/charmbracelet/bubbletea"
+	// "fmt"
 	"github.com/spf13/cobra"
+	"slices"
 )
 
 func init() {
@@ -23,16 +21,10 @@ var listCmd = &cobra.Command{
 	Aliases:           []string{"ls"},
 	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
-		// for _, b := range Bw.Cfg.BookMarks {
-		// 	if tagFilter == "" || slices.Contains(b.Tags, tagFilter) {
-		// 		b.Println()
-		// 	}
-		// }
-		m := TeaModel()
-		p := tea.NewProgram(m)
-		if _, err := p.Run(); err != nil {
-			fmt.Printf("Alas, there's been an error: %v", err)
-			os.Exit(1)
+		for _, b := range Bw.Cfg.BookMarks {
+			if tagFilter == "" || slices.Contains(b.Tags, tagFilter) {
+				b.Println()
+			}
 		}
 	},
 }
