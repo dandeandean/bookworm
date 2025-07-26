@@ -29,8 +29,7 @@ func (w *BookWorm) RegisterConfig() error {
 
 func (b BookMark) Println() {
 	if len(b.Tags) != 0 {
-		fmt.Print(b.Name + ": ")
-		fmt.Println(b.Tags)
+		fmt.Println(b.Name, b.Tags)
 	} else {
 		fmt.Println(b.Name)
 	}
