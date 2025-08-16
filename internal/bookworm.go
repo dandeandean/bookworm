@@ -2,37 +2,24 @@ package internal
 
 import (
 	"errors"
-	"fmt"
 )
 
 type BookWorm struct {
-	Cfg *Config
-}
-
-type BookMark struct {
-	Name string   `json:"name"`
-	Link string   `json:"link"`
-	Tags []string `json:"tags"`
+	Cfg       *Config
+	BookMarks map[string]*BookMark
 }
 
 func Init() *BookWorm {
 	cfg := GetConfig()
 	return &BookWorm{
-		Cfg: cfg,
+		Cfg:       cfg,
+		BookMarks: cfg.BookMarks,
 	}
 }
 
 func (w *BookWorm) RegisterConfig() error {
 	// This is a little janky, but oh well
 	return w.Cfg.ViperInstance.WriteConfig()
-}
-
-func (b BookMark) Println() {
-	if len(b.Tags) != 0 {
-		fmt.Println(b.Name, b.Tags)
-	} else {
-		fmt.Println(b.Name)
-	}
 }
 
 func (w *BookWorm) SetLastOpened(bm BookMark) error {
