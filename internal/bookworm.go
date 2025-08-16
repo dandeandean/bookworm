@@ -10,9 +10,9 @@ type BookWorm struct {
 }
 
 type BookMark struct {
-	Name string   `mapstructure:"name"`
-	Link string   `mapstructure:"link"`
-	Tags []string `mapstructure:"tags"`
+	Name string   `json:"name"`
+	Link string   `json:"link"`
+	Tags []string `json:"tags"`
 }
 
 func Init() *BookWorm {
