@@ -2,6 +2,7 @@ package internal
 
 import (
 	"errors"
+	"fmt"
 )
 
 type BookWorm struct {
@@ -11,12 +12,20 @@ type BookWorm struct {
 
 func Init() *BookWorm {
 	cfg, err := getConfig()
-	if err != nil {
-		panic(err)
+	if err != nil || cfg == nil {
+		panic(errors.New("Something horrible happened"))
 	}
+	bms := cfg.BookMarks
+	if bms == nil {
+		bms = make(map[string]*BookMark)
+	}
+	bms["one"] = &BookMark{
+		Name: "one",
+	}
+	fmt.Println(bms)
 	return &BookWorm{
 		Cfg:       cfg,
-		BookMarks: cfg.BookMarks,
+		BookMarks: bms,
 	}
 }
 
@@ -32,7 +41,7 @@ func (w *BookWorm) SetLastOpened(bm BookMark) error {
 }
 
 func (w *BookWorm) SetTags(name string, tags []string) error {
-	bm, ok := w.Cfg.BookMarks[name]
+	bm, ok := w.BookMarks[name]
 	if !ok {
 		return errors.New("Bookmark not in mealhouse")
 	}
@@ -42,7 +51,7 @@ func (w *BookWorm) SetTags(name string, tags []string) error {
 }
 
 func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
-	w.Cfg.BookMarks[name] = &BookMark{
+	w.BookMarks[name] = &BookMark{
 		Name: name,
 		Link: link,
 		Tags: tags,
@@ -51,7 +60,7 @@ func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
 }
 
 func (w *BookWorm) DeleteBookMark(name string) error {
-	w.Cfg.BookMarks[name] = &BookMark{}
-	delete(w.Cfg.BookMarks, name)
+	w.BookMarks[name] = &BookMark{}
+	delete(w.BookMarks, name)
 	return w.RegisterConfig()
 }

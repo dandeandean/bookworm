@@ -2,11 +2,17 @@ package internal
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
-	"sigs.k8s.io/yaml"
 	"strings"
+
+	"sigs.k8s.io/yaml"
+)
+
+var (
+	configDir = os.Getenv("HOME") + "/.config/bookworm/"
 )
 
 type Config struct {
@@ -15,18 +21,14 @@ type Config struct {
 	LastOpened string               `json:"lastopened"`
 }
 
-func (c Config) writeConfig() error {
+func (c *Config) writeConfig() error {
 	path := getConfigPath()
 	if path == "" {
-		_, err := writeNewConfig()
-		if err != nil {
-			return err
-		}
-		// no need to do anything else if we just made the config, it should be empty
-		return nil
+		return errors.New("the config path is not there!")
 	}
-	yamlBytes, err := yaml.Marshal(c)
-	err = os.WriteFile(path, yamlBytes, 0600)
+	yamlBytes, err := yaml.Marshal(&c)
+	fmt.Println(string(yamlBytes))
+	err = os.WriteFile(path, yamlBytes, 0777)
 	if err != nil {
 		return err
 	}
@@ -37,14 +39,12 @@ func (c Config) writeConfig() error {
 func getConfig() (*Config, error) {
 	var cfg Config
 	path := getConfigPath()
-	if path == "" {
-		_, err := writeNewConfig()
-		if err != nil {
-			return nil, err
-		}
-		// no need to do anything else if we just made the config, it should be empty
-		return &cfg, nil
+	_, err := os.Stat(path)
+	// Create the config files if they don't exist
+	if os.IsNotExist(err) {
+		return initConfig()
 	}
+	// Read in Config
 	yamlBytes, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -56,39 +56,40 @@ func getConfig() (*Config, error) {
 	return &cfg, nil
 }
 
+// Returns the absolute path to the config file
 func getConfigPath() string {
-	homedir := os.Getenv("HOME")
-	suspects := []string{
-		homedir + "/.config/bookworm/config.yml",
-		homedir + "/.config/bookworm/config.yaml",
-		"/etc/bookworm/config.yml",
-		"/etc/bookworm/config.yaml",
-	}
-	for _, s := range suspects {
-		_, try := os.Stat(s)
-		if os.IsExist(try) {
-			return s
-		}
-	}
-	return ""
+	return configDir + "config.yml"
+}
+
+// Returns the absolute path to the db file
+func getDbPath() string {
+	return configDir + "bookworm.db"
 }
 
 // Writes a new config & returns an *os.File
 // This will write to ~/.config/bookworm/config.yml
-func writeNewConfig() (*os.File, error) {
-	homedir := os.Getenv("HOME")
-	if getConfigPath() != "" {
-		return nil, errors.New("config is already there!")
-	}
-	configInfo, err := os.Stat(homedir + "/.config/bookworm")
-	if err != nil {
+func initConfig() (*Config, error) {
+	configInfo, err := os.Stat(configDir)
+	if os.IsNotExist(err) {
+		errr := os.Mkdir(configDir, 0777)
+		if errr != nil {
+			return nil, errr
+		}
+	} else if err != nil {
 		return nil, err
 	}
 	if !configInfo.IsDir() {
 		return nil, errors.New("~/.config/bookworm is not a directory!")
 	}
-	f, err := os.Create(homedir + "/.config/bookworm/config.yml")
-	return f, nil
+	_, err = os.Create(getConfigPath())
+	if err != nil {
+		return nil, err
+	}
+	return &Config{
+		DbPath:     getDbPath(),
+		BookMarks:  make(map[string]*BookMark),
+		LastOpened: "",
+	}, nil
 }
 
 // openURL opens the specified URL in the default browser of the user.
