@@ -6,7 +6,7 @@ import (
 )
 
 func (c *Config) WriteKey(bm BookMark) error {
-	db, err := bbolt.Open(c.AbsolutePath, 0600, nil)
+	db, err := bbolt.Open(c.DbPath, 0600, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -26,7 +26,7 @@ func (c *Config) WriteKey(bm BookMark) error {
 }
 
 func (c *Config) GetBookMark(key string) (*BookMark, error) {
-	db, err := bbolt.Open(c.AbsolutePath, 0600, &bbolt.Options{ReadOnly: true})
+	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{ReadOnly: true})
 	if err != nil {
 		panic(err)
 	}

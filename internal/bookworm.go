@@ -10,21 +10,24 @@ type BookWorm struct {
 }
 
 func Init() *BookWorm {
-	cfg := GetConfig()
+	cfg, err := getConfig()
+	if err != nil {
+		panic(err)
+	}
 	return &BookWorm{
 		Cfg:       cfg,
 		BookMarks: cfg.BookMarks,
 	}
 }
 
+// Registister Config writes all of the changes to the Config
+// This is a little janky, but oh well
 func (w *BookWorm) RegisterConfig() error {
-	// This is a little janky, but oh well
-	return w.Cfg.ViperInstance.WriteConfig()
+	return w.Cfg.writeConfig()
 }
 
 func (w *BookWorm) SetLastOpened(bm BookMark) error {
 	w.Cfg.LastOpened = bm.Link
-	w.Cfg.ViperInstance.Set("lastopened", bm.Link)
 	return w.RegisterConfig()
 }
 
@@ -35,7 +38,6 @@ func (w *BookWorm) SetTags(name string, tags []string) error {
 	}
 	bm.Tags = append(bm.Tags, tags...)
 	// Rewriting all of the bookmarks each time is not great
-	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
 	return w.RegisterConfig()
 }
 
@@ -45,13 +47,11 @@ func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
 		Link: link,
 		Tags: tags,
 	}
-	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
 	return w.RegisterConfig()
 }
 
 func (w *BookWorm) DeleteBookMark(name string) error {
 	w.Cfg.BookMarks[name] = &BookMark{}
 	delete(w.Cfg.BookMarks, name)
-	w.Cfg.ViperInstance.Set("bookmarks", w.Cfg.BookMarks)
 	return w.RegisterConfig()
 }
