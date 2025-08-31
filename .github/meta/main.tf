@@ -5,6 +5,7 @@ resource "github_repository" "bookworm_repo" {
   has_downloads = true
   has_issues    = true
   has_projects  = true
+  visibility    = "public"
 }
 
 resource "github_branch_protection" "main_branch_protection" {
