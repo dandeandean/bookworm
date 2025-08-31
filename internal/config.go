@@ -88,7 +88,7 @@ func initConfig() (*Config, error) {
 	return &Config{
 		DbPath:     getDbPath(),
 		BookMarks:  make(map[string]*BookMark),
-		LastOpened: "",
+		LastOpened: "nothing... yet",
 	}, nil
 }
 

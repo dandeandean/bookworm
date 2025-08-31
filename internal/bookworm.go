@@ -11,6 +11,7 @@ type BookWorm struct {
 }
 
 func Init() *BookWorm {
+	// get or init config
 	cfg, err := getConfig()
 	if err != nil || cfg == nil {
 		panic(errors.New("Something horrible happened"))
@@ -18,9 +19,6 @@ func Init() *BookWorm {
 	bms := cfg.BookMarks
 	if bms == nil {
 		bms = make(map[string]*BookMark)
-	}
-	bms["one"] = &BookMark{
-		Name: "one",
 	}
 	fmt.Println(bms)
 	return &BookWorm{
@@ -32,6 +30,9 @@ func Init() *BookWorm {
 // Registister Config writes all of the changes to the Config
 // This is a little janky, but oh well
 func (w *BookWorm) RegisterConfig() error {
+	// for now we'll store the bookmarks in the config
+	// this should be replaced by a proper db
+	w.Cfg.BookMarks = w.BookMarks
 	return w.Cfg.writeConfig()
 }
 
