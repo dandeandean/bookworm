@@ -2,7 +2,6 @@ package internal
 
 import (
 	"errors"
-	"fmt"
 )
 
 type BookWorm struct {
@@ -20,7 +19,6 @@ func Init() *BookWorm {
 	if bms == nil {
 		bms = make(map[string]*BookMark)
 	}
-	fmt.Println(bms)
 	return &BookWorm{
 		Cfg:       cfg,
 		BookMarks: bms,

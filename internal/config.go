@@ -2,7 +2,6 @@ package internal
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -27,7 +26,9 @@ func (c *Config) writeConfig() error {
 		return errors.New("the config path is not there!")
 	}
 	yamlBytes, err := yaml.Marshal(&c)
-	fmt.Println(string(yamlBytes))
+	if err != nil {
+		panic(err)
+	}
 	err = os.WriteFile(path, yamlBytes, 0777)
 	if err != nil {
 		return err

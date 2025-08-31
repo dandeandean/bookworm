@@ -68,6 +68,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.selected[m.cursor] = struct{}{}
 				internal.OpenURL(m.choices[m.cursor].Link)
+				err := internal.OpenURL(m.choices[m.cursor].Link)
+				if err != nil {
+					panic(err)
+				}
+				Bw.SetLastOpened(m.choices[m.cursor])
 				return m, tea.Quit
 			}
 		}
