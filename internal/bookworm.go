@@ -2,6 +2,7 @@ package internal
 
 import (
 	"errors"
+	"slices"
 )
 
 type BookWorm struct {
@@ -70,8 +71,10 @@ func (w *BookWorm) GetBookMark(name string) *BookMark {
 
 func (w *BookWorm) ListBookMarks(tagFilter string) []*BookMark {
 	out := make([]*BookMark, 0)
-	for _, v := range w.BookMarks {
-		out = append(out, v)
+	for _, b := range w.BookMarks {
+		if slices.Contains(b.Tags, tagFilter) || tagFilter == "" {
+			out = append(out, b)
+		}
 	}
 	return out
 }

@@ -18,8 +18,8 @@ func getNamesThenTagsCmp(cmd *cobra.Command, args []string, toComplete string) (
 }
 
 func getTagsCmp(_ *cobra.Command, args []string, _ string) ([]cobra.Completion, cobra.ShellCompDirective) {
-	out := make([]string, len(Bw.Cfg.BookMarks))
-	for _, b := range Bw.Cfg.BookMarks {
+	out := make([]string, len(Bw.BookMarks))
+	for _, b := range Bw.BookMarks {
 		for _, tag := range b.Tags {
 			if !slices.Contains(args, tag) {
 				out = append(out, tag)
@@ -33,8 +33,8 @@ func getNamesCmp(cmd *cobra.Command, args []string, toComplete string) ([]cobra.
 	if len(args) > 0 {
 		return nonCmp(cmd, args, toComplete)
 	}
-	out := make([]string, len(Bw.Cfg.BookMarks))
-	for k := range Bw.Cfg.BookMarks {
+	out := make([]string, len(Bw.BookMarks))
+	for k := range Bw.BookMarks {
 		out = append(out, k)
 	}
 	return out, cobra.ShellCompDirectiveNoFileComp

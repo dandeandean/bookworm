@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	// "fmt"
 	"github.com/spf13/cobra"
-	"slices"
 )
 
 func init() {
@@ -20,10 +18,8 @@ var listCmd = &cobra.Command{
 	Aliases:           []string{"ls"},
 	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, b := range Bw.Cfg.BookMarks {
-			if tagFilter == "" || slices.Contains(b.Tags, tagFilter) {
-				b.Println()
-			}
+		for _, b := range Bw.ListBookMarks(tagFilter) {
+			b.Println()
 		}
 	},
 }

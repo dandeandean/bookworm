@@ -8,16 +8,14 @@ import (
 )
 
 type model struct {
-	choices  []internal.BookMark // items on the to-do list
-	cursor   int                 // which to-do list item our cursor is pointing at
-	selected map[int]struct{}    // which to-do items are selected
+	choices  []*internal.BookMark // items on the to-do list
+	cursor   int                  // which to-do list item our cursor is pointing at
+	selected map[int]struct{}     // which to-do items are selected
 }
 
 func TeaModel() model {
-	choices := make([]internal.BookMark, 0)
-	for _, bm := range Bw.Cfg.BookMarks {
-		choices = append(choices, *bm)
-	}
+	choices := Bw.ListBookMarks("")
+
 	return model{
 		choices:  choices,
 		selected: make(map[int]struct{}),
@@ -67,12 +65,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				delete(m.selected, m.cursor)
 			} else {
 				m.selected[m.cursor] = struct{}{}
-				internal.OpenURL(m.choices[m.cursor].Link)
 				err := internal.OpenURL(m.choices[m.cursor].Link)
 				if err != nil {
 					panic(err)
 				}
-				Bw.SetLastOpened(m.choices[m.cursor])
+				Bw.SetLastOpened(*m.choices[m.cursor])
 				return m, tea.Quit
 			}
 		}
