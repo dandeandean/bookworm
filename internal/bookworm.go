@@ -63,3 +63,19 @@ func (w *BookWorm) DeleteBookMark(name string) error {
 	delete(w.BookMarks, name)
 	return w.RegisterConfig()
 }
+
+func (w *BookWorm) GetBookMark(name string) *BookMark {
+	return w.BookMarks[name]
+}
+
+func (w *BookWorm) ListBookMarks(tagFilter string) []*BookMark {
+	out := make([]*BookMark, 0)
+	for _, v := range w.BookMarks {
+		out = append(out, v)
+	}
+	return out
+}
+
+func (w *BookWorm) LenBookMarks() int {
+	return len(w.BookMarks)
+}

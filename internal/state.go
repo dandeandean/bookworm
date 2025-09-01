@@ -5,7 +5,7 @@ import (
 	"go.etcd.io/bbolt"
 )
 
-func (c *Config) WriteKey(bm BookMark) error {
+func (c *Config) WriteBookMark(bm BookMark) error {
 	db, err := bbolt.Open(c.DbPath, 0600, nil)
 	if err != nil {
 		panic(err)

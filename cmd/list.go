@@ -13,7 +13,6 @@ func init() {
 	listCmd.RegisterFlagCompletionFunc("tag", getTagsCmp)
 }
 
-// Inspo `gh repo list`
 var listCmd = &cobra.Command{
 	Use:               "list",
 	Args:              cobra.ExactArgs(0),
