@@ -16,7 +16,7 @@ func Init() *BookWorm {
 	if err != nil || cfg == nil {
 		panic(errors.New("Something horrible happened"))
 	}
-	bms, err := cfg.dumpBookMarks()
+	bms, err := cfg.enumBookMarks()
 	if err != nil {
 		panic(err)
 	}

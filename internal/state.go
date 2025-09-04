@@ -3,7 +3,6 @@ package internal
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 
 	"go.etcd.io/bbolt"
@@ -33,7 +32,7 @@ func (bw *BookWorm) writeBookMark(key string) error {
 	return nil
 }
 
-func (c *Config) dumpBookMarks() (map[string]*BookMark, error) {
+func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
 	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
 	if err != nil {
 		return nil, err
