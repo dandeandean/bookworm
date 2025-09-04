@@ -2,13 +2,18 @@ package internal
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"go.etcd.io/bbolt"
 )
 
-func (c Config) WriteBookMark(bm BookMark) error {
-	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
+func (bw *BookWorm) writeBookMark(key string) error {
+	bm := bw.BookMarks[key]
+	if bm == nil {
+		return errors.New("BookMark is Nil")
+	}
+	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
 	if err != nil {
 		panic(err)
 	}
@@ -27,8 +32,8 @@ func (c Config) WriteBookMark(bm BookMark) error {
 	return nil
 }
 
-func (c Config) GetBookMark(key string) (*BookMark, error) {
-	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
+func (bw *BookWorm) getBookMark(key string) (*BookMark, error) {
+	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
 	if err != nil {
 		panic(err)
 	}

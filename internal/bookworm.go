@@ -56,6 +56,7 @@ func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
 		Link: link,
 		Tags: tags,
 	}
+	w.writeBookMark(name)
 	return w.RegisterConfig()
 }
 
