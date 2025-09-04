@@ -16,7 +16,10 @@ func Init() *BookWorm {
 	if err != nil || cfg == nil {
 		panic(errors.New("Something horrible happened"))
 	}
-	bms := cfg.BookMarks
+	bms, err := cfg.dumpBookMarks()
+	if err != nil {
+		panic(err)
+	}
 	if bms == nil {
 		bms = make(map[string]*BookMark)
 	}

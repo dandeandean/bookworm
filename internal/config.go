@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"encoding/json"
 	"errors"
 	"os"
 	"os/exec"
@@ -136,4 +137,13 @@ func isWSL() bool {
 func IsValidUrl(url string) bool {
 	return strings.Contains(url, "https://") ||
 		strings.Contains(url, "http://")
+}
+
+func bytesToBookMark(buf []byte) (*BookMark, error) {
+	bmToReturn := &BookMark{}
+	err := json.Unmarshal(buf, bmToReturn)
+	if err != nil {
+		return nil, err
+	}
+	return bmToReturn, nil
 }

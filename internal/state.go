@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"go.etcd.io/bbolt"
@@ -15,25 +16,47 @@ func (bw *BookWorm) writeBookMark(key string) error {
 	}
 	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer db.Close()
 	buf, err := json.Marshal(bm)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	err = db.Update(func(tx *bbolt.Tx) error {
 		bookMarksBucket, err := tx.CreateBucketIfNotExists([]byte("bookmarks"))
 		if err != nil {
-			panic(err)
+			return err
 		}
 		return bookMarksBucket.Put([]byte(bm.Name), buf)
 	})
 	return nil
 }
 
-func (bw *BookWorm) enumBookMarks(key string) ([]*BookMark, error) {
-	return nil, nil
+func (c *Config) dumpBookMarks() (map[string]*BookMark, error) {
+	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	bmsRaw := make(map[string][]byte)
+	db.View(func(tx *bbolt.Tx) error {
+		b := tx.Bucket([]byte("bookmarks"))
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			bmsRaw[string(k)] = v
+		}
+		return nil
+	})
+	bookmarks := make(map[string]*BookMark)
+	for k, v := range bmsRaw {
+		b, err := bytesToBookMark(v)
+		if err != nil {
+			return nil, err
+		}
+		bookmarks[k] = b
+	}
+	return bookmarks, nil
 }
 
 func (bw *BookWorm) getBookMark(key string) (*BookMark, error) {
@@ -42,7 +65,6 @@ func (bw *BookWorm) getBookMark(key string) (*BookMark, error) {
 		panic(err)
 	}
 	defer db.Close()
-	bmToReturn := &BookMark{}
 	var buf []byte
 	err = db.View(
 		func(tx *bbolt.Tx) error {
@@ -53,13 +75,9 @@ func (bw *BookWorm) getBookMark(key string) (*BookMark, error) {
 			buf = bookMarksBucket.Get([]byte(key))
 			return nil
 		})
+	if err != nil {
+		return nil, err
+	}
 
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(buf, bmToReturn)
-	if err != nil {
-		return nil, err
-	}
-	return bmToReturn, nil
+	return bytesToBookMark(buf)
 }
