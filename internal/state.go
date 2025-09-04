@@ -32,6 +32,10 @@ func (bw *BookWorm) writeBookMark(key string) error {
 	return nil
 }
 
+func (bw *BookWorm) enumBookMarks(key string) ([]*BookMark, error) {
+	return nil, nil
+}
+
 func (bw *BookWorm) getBookMark(key string) (*BookMark, error) {
 	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
 	if err != nil {
