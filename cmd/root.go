@@ -5,7 +5,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 var (
@@ -22,7 +21,6 @@ var rootCmd = &cobra.Command{
 		p := tea.NewProgram(m)
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Alas, there's been an error: %v", err)
-			os.Exit(1)
 		}
 	},
 }

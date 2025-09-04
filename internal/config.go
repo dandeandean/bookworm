@@ -65,7 +65,7 @@ func getConfigPath() string {
 
 // Returns the absolute path to the db file
 func getDbPath() string {
-	return configDir + "bookworm.db"
+	return "worm.db"
 }
 
 // Writes a new config & returns an *os.File
@@ -73,7 +73,7 @@ func getDbPath() string {
 func initConfig() (*Config, error) {
 	configInfo, err := os.Stat(configDir)
 	if os.IsNotExist(err) {
-		errr := os.Mkdir(configDir, 0777)
+		errr := os.Mkdir(configDir, 0666)
 		if errr != nil {
 			return nil, errr
 		}

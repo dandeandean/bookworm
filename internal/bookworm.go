@@ -10,11 +10,14 @@ type BookWorm struct {
 	BookMarks map[string]*BookMark
 }
 
+// get or init config
 func Init() *BookWorm {
-	// get or init config
 	cfg, err := getConfig()
-	if err != nil || cfg == nil {
-		panic(errors.New("Something horrible happened"))
+	if err != nil {
+		panic(err)
+	}
+	if cfg == nil {
+		panic(errors.New("Received a Nil Config"))
 	}
 	bms, err := cfg.enumBookMarks()
 	if err != nil {

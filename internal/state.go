@@ -33,7 +33,7 @@ func (bw *BookWorm) writeBookMark(key string) error {
 }
 
 func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
-	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
+	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
 	if err != nil {
 		return nil, err
 	}
