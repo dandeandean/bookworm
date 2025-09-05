@@ -10,6 +10,11 @@ type BookWorm struct {
 	BookMarks map[string]*BookMark
 }
 
+// get already init'd config
+func Get() (*BookWorm, error) {
+	return nil, errors.New("TODO")
+}
+
 // get or init config
 func Init() *BookWorm {
 	cfg, err := getConfig()

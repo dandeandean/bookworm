@@ -2,14 +2,24 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
 )
 
-var (
-	Bw = internal.Init()
-)
+// Global BookWorm object
+var Bw *internal.BookWorm
+
+func init() {
+	var err error
+	Bw, err = internal.Get()
+	if err != nil {
+		fmt.Println("Couldn't get Config, please run bookworm init")
+		os.Exit(2)
+	}
+}
 
 var tagFilter string
 
