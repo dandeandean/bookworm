@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +13,6 @@ var initCmd = &cobra.Command{
 	Short:   "Initialize Bookworm.",
 	PreRunE: prInitCfg,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(Bw)
 		if Bw == nil {
 			panic("BW object is nil")
 		}

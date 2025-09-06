@@ -32,6 +32,26 @@ func (bw *BookWorm) writeBookMark(key string) error {
 	return nil
 }
 
+func (bw *BookWorm) deleteBookMark(key string) error {
+	bm := bw.BookMarks[key]
+	if bm == nil {
+		return errors.New("BookMark is Nil")
+	}
+	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	err = db.Update(func(tx *bbolt.Tx) error {
+		bookMarksBucket := tx.Bucket([]byte("bookmarks"))
+		if bookMarksBucket == nil {
+			return errors.New("No bookmark bucket found!")
+		}
+		return bookMarksBucket.Delete([]byte(bm.Name))
+	})
+	return nil
+}
+
 func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
 	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
 	if err != nil {

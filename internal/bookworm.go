@@ -72,7 +72,7 @@ func (w *BookWorm) SetTags(name string, tags []string) error {
 	}
 	bm.Tags = append(bm.Tags, tags...)
 	// Rewriting all of the bookmarks each time is not great
-	return w.RegisterConfig()
+	return w.writeBookMark(name)
 }
 
 func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
@@ -81,14 +81,13 @@ func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
 		Link: link,
 		Tags: tags,
 	}
-	w.writeBookMark(name)
-	return w.RegisterConfig()
+	return w.writeBookMark(name)
 }
 
 func (w *BookWorm) DeleteBookMark(name string) error {
 	w.BookMarks[name] = &BookMark{}
 	delete(w.BookMarks, name)
-	return w.RegisterConfig()
+	return w.deleteBookMark(name)
 }
 
 func (w *BookWorm) GetBookMark(name string) *BookMark {

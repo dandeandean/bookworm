@@ -8,7 +8,6 @@ import (
 
 func init() {
 	rootCmd.AddCommand(openCmd)
-	fmt.Println(rootCmd.CommandPath())
 }
 
 var openCmd = &cobra.Command{

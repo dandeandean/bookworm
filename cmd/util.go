@@ -1,16 +1,18 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"slices"
-
-	"fmt"
 
 	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
 )
 
 func prGetCfg(_ *cobra.Command, _ []string) error {
+	if Bw != nil {
+		return nil
+	}
 	var err error
 	Bw, err = internal.Get()
 	if err != nil {
@@ -44,9 +46,11 @@ func getNamesThenTagsCmp(cmd *cobra.Command, args []string, toComplete string) (
 	return getTagsCmp(cmd, args, toComplete)
 }
 
-func getTagsCmp(_ *cobra.Command, args []string, _ string) ([]cobra.Completion, cobra.ShellCompDirective) {
-	out := make([]string, len(Bw.BookMarks))
-	for _, b := range Bw.BookMarks {
+func getTagsCmp(cmd *cobra.Command, args []string, _ string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	prGetCfg(cmd, args)
+	bms := Bw.ListBookMarks("")
+	out := make([]string, len(bms))
+	for _, b := range bms {
 		for _, tag := range b.Tags {
 			if !slices.Contains(args, tag) {
 				out = append(out, tag)
@@ -60,9 +64,11 @@ func getNamesCmp(cmd *cobra.Command, args []string, toComplete string) ([]cobra.
 	if len(args) > 0 {
 		return nonCmp(cmd, args, toComplete)
 	}
-	out := make([]string, len(Bw.BookMarks))
-	for k := range Bw.BookMarks {
-		out = append(out, k)
+	prGetCfg(cmd, args)
+	bms := Bw.ListBookMarks("")
+	out := make([]string, 0)
+	for _, k := range bms {
+		out = append(out, k.Name)
 	}
 	return out, cobra.ShellCompDirectiveNoFileComp
 }
