@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+	// "os"
 	"slices"
 
 	"github.com/dandeandean/bookworm/internal"
@@ -18,7 +18,6 @@ func prGetCfg(_ *cobra.Command, _ []string) error {
 	if err != nil {
 		fmt.Println("Couldn't get Config, please run bookworm init")
 		fmt.Println(err)
-		os.Exit(1)
 		return err
 	}
 	return nil
@@ -29,7 +28,6 @@ func prInitCfg(cmd *cobra.Command, args []string) error {
 	Bw, err = internal.Init()
 	if err != nil {
 		fmt.Println("Failed to create config: ", err)
-		os.Exit(1)
 		return err
 	}
 	return nil

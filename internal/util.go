@@ -16,9 +16,8 @@ var (
 )
 
 type Config struct {
-	DbPath     string               `json:"dbpath"`
-	BookMarks  map[string]*BookMark `json:"bookmarks"`
-	LastOpened string               `json:"lastopened"`
+	DbPath     string `json:"dbpath"`
+	LastOpened string `json:"lastopened"`
 }
 
 func (c *Config) writeConfig() error {
@@ -87,13 +86,14 @@ func initConfig() (*Config, error) {
 	if !configInfo.IsDir() {
 		return nil, errors.New("~/.config/bookworm is not a directory!")
 	}
-	_, err = os.Create(getConfigPath())
+	_, err = os.Create(
+		getConfigPath(),
+	)
 	if err != nil {
 		return nil, err
 	}
 	cfg := &Config{
 		DbPath:     getDbPath(),
-		BookMarks:  make(map[string]*BookMark),
 		LastOpened: "nothing... yet",
 	}
 	err = cfg.writeConfig()

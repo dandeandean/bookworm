@@ -38,31 +38,17 @@ func Init() (*BookWorm, error) {
 	if cfg == nil {
 		return nil, err
 	}
-	bms, err := cfg.enumBookMarks()
-	if err != nil {
-		return nil, err
-	}
-	if bms == nil {
-		bms = make(map[string]*BookMark)
-	}
 	return &BookWorm{
 		Cfg:       cfg,
-		BookMarks: bms,
+		BookMarks: make(map[string]*BookMark),
 	}, nil
 }
 
 // Registister Config writes all of the changes to the Config
-// This is a little janky, but oh well
-func (w *BookWorm) RegisterConfig() error {
-	// for now we'll store the bookmarks in the config
-	// this should be replaced by a proper db
-	w.Cfg.BookMarks = w.BookMarks
-	return w.Cfg.writeConfig()
-}
 
 func (w *BookWorm) SetLastOpened(bm BookMark) error {
 	w.Cfg.LastOpened = bm.Link
-	return w.RegisterConfig()
+	return w.Cfg.writeConfig()
 }
 
 func (w *BookWorm) SetTags(name string, tags []string) error {

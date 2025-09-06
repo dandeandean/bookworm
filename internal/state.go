@@ -43,9 +43,9 @@ func (bw *BookWorm) deleteBookMark(key string) error {
 	}
 	defer db.Close()
 	err = db.Update(func(tx *bbolt.Tx) error {
-		bookMarksBucket := tx.Bucket([]byte("bookmarks"))
-		if bookMarksBucket == nil {
-			return errors.New("No bookmark bucket found!")
+		bookMarksBucket, err := tx.CreateBucketIfNotExists([]byte("bookmarks"))
+		if err != nil {
+			return err
 		}
 		return bookMarksBucket.Delete([]byte(bm.Name))
 	})
@@ -53,15 +53,18 @@ func (bw *BookWorm) deleteBookMark(key string) error {
 }
 
 func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
-	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
+	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 	bmsRaw := make(map[string][]byte)
 	db.View(func(tx *bbolt.Tx) error {
-		b := tx.Bucket([]byte("bookmarks"))
-		c := b.Cursor()
+		bookMarksBucket := tx.Bucket([]byte("bookmarks"))
+		if bookMarksBucket == nil {
+			return err
+		}
+		c := bookMarksBucket.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			bmsRaw[string(k)] = v
 		}
@@ -78,7 +81,7 @@ func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
 	return bookmarks, nil
 }
 
-func (bw *BookWorm) getBookMark(key string) (*BookMark, error) {
+func (bw *BookWorm) _(key string) (*BookMark, error) {
 	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
 	if err != nil {
 		panic(err)
