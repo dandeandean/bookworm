@@ -2,6 +2,7 @@ package internal
 
 import (
 	"errors"
+	"slices"
 )
 
 type BookWorm struct {
@@ -9,20 +10,45 @@ type BookWorm struct {
 	BookMarks map[string]*BookMark
 }
 
-func Init() *BookWorm {
-	// get or init config
+// get already init'd config
+func Get() (*BookWorm, error) {
 	cfg, err := getConfig()
-	if err != nil || cfg == nil {
-		panic(errors.New("Something horrible happened"))
+	if err != nil {
+		return nil, err
 	}
-	bms := cfg.BookMarks
+	bms, err := cfg.enumBookMarks()
+	if err != nil {
+		return nil, err
+	}
+	if bms == nil {
+		return nil, errors.New("Bookmarks are nil!")
+	}
+	return &BookWorm{
+		Cfg:       cfg,
+		BookMarks: bms,
+	}, nil
+}
+
+// Init a Config that is not already there
+func Init() (*BookWorm, error) {
+	cfg, err := initConfig()
+	if err != nil {
+		return nil, err
+	}
+	if cfg == nil {
+		return nil, err
+	}
+	bms, err := cfg.enumBookMarks()
+	if err != nil {
+		return nil, err
+	}
 	if bms == nil {
 		bms = make(map[string]*BookMark)
 	}
 	return &BookWorm{
 		Cfg:       cfg,
 		BookMarks: bms,
-	}
+	}, nil
 }
 
 // Registister Config writes all of the changes to the Config
@@ -55,6 +81,7 @@ func (w *BookWorm) NewBookMark(name string, link string, tags []string) error {
 		Link: link,
 		Tags: tags,
 	}
+	w.writeBookMark(name)
 	return w.RegisterConfig()
 }
 
@@ -62,4 +89,22 @@ func (w *BookWorm) DeleteBookMark(name string) error {
 	w.BookMarks[name] = &BookMark{}
 	delete(w.BookMarks, name)
 	return w.RegisterConfig()
+}
+
+func (w *BookWorm) GetBookMark(name string) *BookMark {
+	return w.BookMarks[name]
+}
+
+func (w *BookWorm) ListBookMarks(tagFilter string) []*BookMark {
+	out := make([]*BookMark, 0)
+	for _, b := range w.BookMarks {
+		if slices.Contains(b.Tags, tagFilter) || tagFilter == "" {
+			out = append(out, b)
+		}
+	}
+	return out
+}
+
+func (w *BookWorm) LenBookMarks() int {
+	return len(w.BookMarks)
 }

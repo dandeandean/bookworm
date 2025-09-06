@@ -13,6 +13,7 @@ var delCmd = &cobra.Command{
 	Short:             "Delete no good bookmarks.",
 	Args:              cobra.ExactArgs(1),
 	Aliases:           []string{"rm"},
+	PreRunE:           prGetCfg,
 	ValidArgsFunction: getNamesCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		Bw.DeleteBookMark(args[0])

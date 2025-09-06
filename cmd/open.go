@@ -8,17 +8,19 @@ import (
 
 func init() {
 	rootCmd.AddCommand(openCmd)
+	fmt.Println(rootCmd.CommandPath())
 }
 
 var openCmd = &cobra.Command{
 	Use:               "open",
 	Short:             "Open a Bookmark.",
 	Aliases:           []string{"go"},
+	PreRunE:           prGetCfg,
 	Args:              cobra.ExactArgs(1),
 	ValidArgsFunction: getNamesCmp,
 	Run: func(cmd *cobra.Command, args []string) {
-		bm, ok := Bw.Cfg.BookMarks[args[0]]
-		if !ok {
+		bm := Bw.GetBookMark(args[0])
+		if bm == nil {
 			fmt.Println("Couldn't Find BookMark!")
 			return
 		}
