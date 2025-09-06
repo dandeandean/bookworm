@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func init() {
@@ -12,11 +10,13 @@ func init() {
 }
 
 var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Initialize Bookworm.",
+	Use:     "init",
+	Short:   "Initialize Bookworm.",
+	PreRunE: prInitCfg,
 	Run: func(cmd *cobra.Command, args []string) {
-		Bw = internal.Init()
-		fmt.Println("todo")
-		os.Exit(1)
+		fmt.Println(Bw)
+		if Bw == nil {
+			panic("BW object is nil")
+		}
 	},
 }

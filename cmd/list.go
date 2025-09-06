@@ -16,6 +16,7 @@ var listCmd = &cobra.Command{
 	Args:              cobra.ExactArgs(0),
 	Short:             "List your bookmarks.",
 	Aliases:           []string{"ls"},
+	PreRunE:           prGetCfg,
 	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, b := range Bw.ListBookMarks(tagFilter) {

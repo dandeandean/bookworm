@@ -12,21 +12,35 @@ type BookWorm struct {
 
 // get already init'd config
 func Get() (*BookWorm, error) {
-	return nil, errors.New("TODO")
-}
-
-// get or init config
-func Init() *BookWorm {
 	cfg, err := getConfig()
 	if err != nil {
-		panic(err)
-	}
-	if cfg == nil {
-		panic(errors.New("Received a Nil Config"))
+		return nil, err
 	}
 	bms, err := cfg.enumBookMarks()
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	if bms == nil {
+		return nil, errors.New("Bookmarks are nil!")
+	}
+	return &BookWorm{
+		Cfg:       cfg,
+		BookMarks: bms,
+	}, nil
+}
+
+// Init a Config that is not already there
+func Init() (*BookWorm, error) {
+	cfg, err := getConfig()
+	if err != nil {
+		return nil, err
+	}
+	if cfg == nil {
+		return nil, err
+	}
+	bms, err := cfg.enumBookMarks()
+	if err != nil {
+		return nil, err
 	}
 	if bms == nil {
 		bms = make(map[string]*BookMark)
@@ -34,7 +48,7 @@ func Init() *BookWorm {
 	return &BookWorm{
 		Cfg:       cfg,
 		BookMarks: bms,
-	}
+	}, nil
 }
 
 // Registister Config writes all of the changes to the Config

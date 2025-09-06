@@ -38,13 +38,14 @@ func (c *Config) writeConfig() error {
 }
 
 // Get config from system
+// Returns an error if the Config cannot be found
 func getConfig() (*Config, error) {
 	var cfg Config
 	path := getConfigPath()
 	_, err := os.Stat(path)
 	// Create the config files if they don't exist
-	if os.IsNotExist(err) {
-		return initConfig()
+	if err != nil {
+		return nil, err
 	}
 	// Read in Config
 	yamlBytes, err := os.ReadFile(path)
@@ -65,11 +66,12 @@ func getConfigPath() string {
 
 // Returns the absolute path to the db file
 func getDbPath() string {
-	return "worm.db"
+	return configDir + "worm.db"
 }
 
 // Writes a new config & returns an *os.File
 // This will write to ~/.config/bookworm/config.yml
+// .. or it will blow up
 func initConfig() (*Config, error) {
 	configInfo, err := os.Stat(configDir)
 	if os.IsNotExist(err) {
