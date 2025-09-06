@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"encoding/json"
 	"errors"
 	"os"
 	"os/exec"
@@ -15,9 +16,8 @@ var (
 )
 
 type Config struct {
-	DbPath     string               `json:"dbpath"`
-	BookMarks  map[string]*BookMark `json:"bookmarks"`
-	LastOpened string               `json:"lastopened"`
+	DbPath     string `json:"dbpath"`
+	LastOpened string `json:"lastopened"`
 }
 
 func (c *Config) writeConfig() error {
@@ -37,13 +37,14 @@ func (c *Config) writeConfig() error {
 }
 
 // Get config from system
+// Returns an error if the Config cannot be found
 func getConfig() (*Config, error) {
 	var cfg Config
 	path := getConfigPath()
 	_, err := os.Stat(path)
 	// Create the config files if they don't exist
-	if os.IsNotExist(err) {
-		return initConfig()
+	if err != nil {
+		return nil, err
 	}
 	// Read in Config
 	yamlBytes, err := os.ReadFile(path)
@@ -64,33 +65,39 @@ func getConfigPath() string {
 
 // Returns the absolute path to the db file
 func getDbPath() string {
-	return configDir + "bookworm.db"
+	return configDir + "worm.db"
 }
 
 // Writes a new config & returns an *os.File
 // This will write to ~/.config/bookworm/config.yml
+// .. or it will blow up
 func initConfig() (*Config, error) {
 	configInfo, err := os.Stat(configDir)
+	// Create the config.yml if it's not there
 	if os.IsNotExist(err) {
-		errr := os.Mkdir(configDir, 0777)
-		if errr != nil {
-			return nil, errr
+		err = os.Mkdir(configDir, 0666)
+		if err != nil {
+			return nil, err
 		}
-	} else if err != nil {
+	}
+	if err != nil {
 		return nil, err
 	}
 	if !configInfo.IsDir() {
 		return nil, errors.New("~/.config/bookworm is not a directory!")
 	}
-	_, err = os.Create(getConfigPath())
+	_, err = os.Create(
+		getConfigPath(),
+	)
 	if err != nil {
 		return nil, err
 	}
-	return &Config{
+	cfg := &Config{
 		DbPath:     getDbPath(),
-		BookMarks:  make(map[string]*BookMark),
 		LastOpened: "nothing... yet",
-	}, nil
+	}
+	err = cfg.writeConfig()
+	return cfg, err
 }
 
 // openURL opens the specified URL in the default browser of the user.
@@ -136,4 +143,13 @@ func isWSL() bool {
 func IsValidUrl(url string) bool {
 	return strings.Contains(url, "https://") ||
 		strings.Contains(url, "http://")
+}
+
+func bytesToBookMark(buf []byte) (*BookMark, error) {
+	bmToReturn := &BookMark{}
+	err := json.Unmarshal(buf, bmToReturn)
+	if err != nil {
+		return nil, err
+	}
+	return bmToReturn, nil
 }

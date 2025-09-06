@@ -15,6 +15,7 @@ var makeCmd = &cobra.Command{
 	Short:             "Make new bookmarks.",
 	Args:              cobra.ExactArgs(2),
 	Aliases:           []string{"mk", "new"},
+	PreRunE:           prGetCfg,
 	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !internal.IsValidUrl(args[1]) {

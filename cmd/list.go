@@ -1,9 +1,7 @@
 package cmd
 
 import (
-	// "fmt"
 	"github.com/spf13/cobra"
-	"slices"
 )
 
 func init() {
@@ -13,18 +11,16 @@ func init() {
 	listCmd.RegisterFlagCompletionFunc("tag", getTagsCmp)
 }
 
-// Inspo `gh repo list`
 var listCmd = &cobra.Command{
 	Use:               "list",
 	Args:              cobra.ExactArgs(0),
 	Short:             "List your bookmarks.",
 	Aliases:           []string{"ls"},
+	PreRunE:           prGetCfg,
 	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, b := range Bw.Cfg.BookMarks {
-			if tagFilter == "" || slices.Contains(b.Tags, tagFilter) {
-				b.Println()
-			}
+		for _, b := range Bw.ListBookMarks(tagFilter) {
+			b.Println()
 		}
 	},
 }
