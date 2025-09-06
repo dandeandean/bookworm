@@ -74,6 +74,7 @@ func getDbPath() string {
 // .. or it will blow up
 func initConfig() (*Config, error) {
 	configInfo, err := os.Stat(configDir)
+	// Create the config.yml if it's not there
 	if os.IsNotExist(err) {
 		errr := os.Mkdir(configDir, 0666)
 		if errr != nil {
@@ -89,11 +90,13 @@ func initConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Config{
+	cfg := &Config{
 		DbPath:     getDbPath(),
 		BookMarks:  make(map[string]*BookMark),
 		LastOpened: "nothing... yet",
-	}, nil
+	}
+	err = cfg.writeConfig()
+	return cfg, err
 }
 
 // openURL opens the specified URL in the default browser of the user.

@@ -31,7 +31,7 @@ func Get() (*BookWorm, error) {
 
 // Init a Config that is not already there
 func Init() (*BookWorm, error) {
-	cfg, err := getConfig()
+	cfg, err := initConfig()
 	if err != nil {
 		return nil, err
 	}
