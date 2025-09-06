@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
@@ -16,5 +18,6 @@ var initCmd = &cobra.Command{
 		if Bw == nil {
 			panic("BW object is nil")
 		}
+		fmt.Println("Successfully Initialized")
 	},
 }
