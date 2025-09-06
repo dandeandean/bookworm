@@ -76,11 +76,12 @@ func initConfig() (*Config, error) {
 	configInfo, err := os.Stat(configDir)
 	// Create the config.yml if it's not there
 	if os.IsNotExist(err) {
-		errr := os.Mkdir(configDir, 0666)
-		if errr != nil {
-			return nil, errr
+		err = os.Mkdir(configDir, 0666)
+		if err != nil {
+			return nil, err
 		}
-	} else if err != nil {
+	}
+	if err != nil {
 		return nil, err
 	}
 	if !configInfo.IsDir() {
