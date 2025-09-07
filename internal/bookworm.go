@@ -12,7 +12,7 @@ type BookWorm struct {
 
 // get already init'd config
 func Get() (*BookWorm, error) {
-	cfg, err := getConfig()
+	cfg, err := getConfig("")
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func Get() (*BookWorm, error) {
 
 // Init a Config that is not already there
 func Init() (*BookWorm, error) {
-	cfg, err := initConfig()
+	cfg, err := initConfig("")
 	if err != nil {
 		return nil, err
 	}

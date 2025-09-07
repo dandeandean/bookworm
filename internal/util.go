@@ -21,7 +21,7 @@ type Config struct {
 }
 
 func (c *Config) writeConfig() error {
-	path := getConfigPath()
+	path := getConfigPath("")
 	if path == "" {
 		return errors.New("the config path is not there!")
 	}
@@ -38,9 +38,9 @@ func (c *Config) writeConfig() error {
 
 // Get config from system
 // Returns an error if the Config cannot be found
-func getConfig() (*Config, error) {
+func getConfig(pathTo string) (*Config, error) {
 	var cfg Config
-	path := getConfigPath()
+	path := getConfigPath(pathTo)
 	_, err := os.Stat(path)
 	// Create the config files if they don't exist
 	if err != nil {
@@ -59,23 +59,38 @@ func getConfig() (*Config, error) {
 }
 
 // Returns the absolute path to the config file
-func getConfigPath() string {
-	return configDir + "config.yml"
+func getConfigPath(pathTo string) string {
+	if pathTo == "" {
+		return configDir + "config.yml"
+	}
+	return pathTo + "config.yml"
 }
 
 // Returns the absolute path to the db file
-func getDbPath() string {
-	return configDir + "worm.db"
+func getDbPath(pathTo string) string {
+	if pathTo == "" {
+		return configDir + "worm.db"
+	}
+	return pathTo + "worm.db"
+}
+
+// Returns the config dir
+// defaults to conf
+func getConfigDir(pathTo string) string {
+	if pathTo == "" {
+		return configDir
+	}
+	return pathTo
 }
 
 // Writes a new config & returns an *os.File
-// This will write to ~/.config/bookworm/config.yml
-// .. or it will blow up
-func initConfig() (*Config, error) {
-	configInfo, err := os.Stat(configDir)
+// This will write to $pathTo+config.yml
+func initConfig(pathTo string) (*Config, error) {
+	pathTo = getConfigDir(pathTo)
+	configInfo, err := os.Stat(pathTo)
 	// Create the config.yml if it's not there
 	if os.IsNotExist(err) {
-		err = os.Mkdir(configDir, 0666)
+		err = os.Mkdir(pathTo, 0666)
 		if err != nil {
 			return nil, err
 		}
@@ -87,13 +102,13 @@ func initConfig() (*Config, error) {
 		return nil, errors.New("~/.config/bookworm is not a directory!")
 	}
 	_, err = os.Create(
-		getConfigPath(),
+		getConfigPath(""),
 	)
 	if err != nil {
 		return nil, err
 	}
 	cfg := &Config{
-		DbPath:     getDbPath(),
+		DbPath:     getDbPath(""),
 		LastOpened: "nothing... yet",
 	}
 	err = cfg.writeConfig()
