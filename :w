@@ -60,36 +60,34 @@ func getConfig(pathTo string) (*Config, error) {
 
 // Adds a slash at the end if it's not there
 // does nothing if it is there
-func withSlash(pathTo string) string {
+func withSlash(pathTo string) {
 	if pathTo[len(pathTo)] != '/' {
-		return pathTo + "/"
 	}
-	return pathTo
 }
 
 // Returns the absolute path to the config file
 func getConfigPath(pathTo string) string {
 	if pathTo == "" {
-		return withSlash(configDir) + "config.yml"
+		return configDir + "config.yml"
 	}
-	return withSlash(pathTo) + "config.yml"
+	return pathTo + "config.yml"
 }
 
 // Returns the absolute path to the db file
 func getDbPath(pathTo string) string {
 	if pathTo == "" {
-		return withSlash(configDir) + "worm.db"
+		return configDir + "worm.db"
 	}
-	return withSlash(pathTo) + "worm.db"
+	return pathTo + "worm.db"
 }
 
 // Returns the config dir
 // defaults to conf
 func getConfigDir(pathTo string) string {
 	if pathTo == "" {
-		return withSlash(configDir)
+		return configDir
 	}
-	return withSlash(pathTo)
+	return pathTo
 }
 
 // Writes a new config & returns an *os.File
