@@ -8,7 +8,7 @@ import (
 
 func TestPaths(t *testing.T) {
 	pathTo := os.TempDir()
-	t.Log("Using Config Path " + pathTo)
+	t.Log("Using Config Dir " + pathTo)
 	defer os.Remove(pathTo)
 	cfgPath := strings.Split(getConfigPath(pathTo), "/")
 	dbPath := strings.Split(getDbPath(pathTo), "/")
@@ -19,11 +19,14 @@ func TestPaths(t *testing.T) {
 	if cfgPath[len(cfgPath)-1] != "config.yml" {
 		t.Fatalf("Config path is wrong")
 	}
+	if getConfigDir(pathTo) != pathTo {
+		t.Fatalf("Config dir is wrong")
+	}
 }
 
 func TestInitConfig(t *testing.T) {
 	pathTo := os.TempDir()
-	t.Log("Using Config Path " + pathTo)
+	t.Log("Using Config Dir " + pathTo)
 	defer os.Remove(pathTo)
 	cfg, err := initConfig(pathTo)
 	if err != nil {

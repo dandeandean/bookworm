@@ -48,7 +48,7 @@ func Init() (*BookWorm, error) {
 
 func (w *BookWorm) SetLastOpened(bm BookMark) error {
 	w.Cfg.LastOpened = bm.Link
-	return w.Cfg.writeConfig()
+	return w.Cfg.writeConfig("")
 }
 
 func (w *BookWorm) SetTags(name string, tags []string) error {

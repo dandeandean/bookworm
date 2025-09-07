@@ -20,8 +20,8 @@ type Config struct {
 	LastOpened string `json:"lastopened"`
 }
 
-func (c *Config) writeConfig() error {
-	path := getConfigPath("")
+func (c *Config) writeConfig(pathTo string) error {
+	path := getConfigPath(pathTo)
 	if path == "" {
 		return errors.New("the config path is not there!")
 	}
@@ -111,7 +111,7 @@ func initConfig(pathTo string) (*Config, error) {
 		DbPath:     getDbPath(""),
 		LastOpened: "nothing... yet",
 	}
-	err = cfg.writeConfig()
+	err = cfg.writeConfig(pathTo)
 	return cfg, err
 }
 
