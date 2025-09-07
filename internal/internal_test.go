@@ -8,8 +8,11 @@ import (
 
 func TestPaths(t *testing.T) {
 	pathTo := os.TempDir()
-	t.Log("Using Config Dir " + pathTo)
 	defer os.Remove(pathTo)
+	if []byte(pathTo)[len([]byte(pathTo))-1] != '/' {
+		pathTo += "/"
+	}
+	t.Log("Using Config Dir " + pathTo)
 	cfgPath := strings.Split(getConfigPath(pathTo), "/")
 	dbPath := strings.Split(getDbPath(pathTo), "/")
 	t.Log(cfgPath, dbPath)
@@ -26,9 +29,12 @@ func TestPaths(t *testing.T) {
 
 func TestInitConfig(t *testing.T) {
 	pathTo := os.TempDir()
+	defer os.Remove(pathTo)
+	if []byte(pathTo)[len([]byte(pathTo))-1] != '/' {
+		pathTo += "/"
+	}
 	t.Log("Using Config Dir " + pathTo)
 	t.Log(getConfigDir(pathTo))
-	defer os.Remove(pathTo)
 
 	cfg, err := initConfig(pathTo)
 	if err != nil {
