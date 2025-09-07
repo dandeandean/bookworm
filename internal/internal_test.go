@@ -7,8 +7,11 @@ import (
 )
 
 func TestPaths(t *testing.T) {
-	cfgPath := strings.Split(getConfigPath("/tmp/"), "/")
-	dbPath := strings.Split(getDbPath("/tmp/"), "/")
+	pathTo := os.TempDir()
+	defer os.Remove(pathTo)
+	cfgPath := strings.Split(getConfigPath(pathTo), "/")
+	dbPath := strings.Split(getDbPath(pathTo), "/")
+	t.Log(cfgPath, dbPath)
 	if dbPath[len(dbPath)-1] != "worm.db" {
 		t.Fatalf("DB path is wrong")
 	}
