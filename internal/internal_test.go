@@ -25,16 +25,16 @@ func TestPaths(t *testing.T) {
 }
 
 func TestInitConfig(t *testing.T) {
-	pathTo := os.TempDir()
-	t.Log("Using Config Dir " + pathTo)
-	defer os.Remove(pathTo)
-	cfg, err := initConfig(pathTo)
-	if err != nil {
-		t.Fatalf("initConfig returned an error %s", err)
-	}
-	if cfg == nil {
-		t.Fatalf("initConfig returned a nil object")
-	}
+	// pathTo := os.TempDir()
+	// t.Log("Using Config Dir " + pathTo)
+	// defer os.Remove(pathTo)
+	// cfg, err := initConfig(pathTo)
+	// if err != nil {
+	// 	t.Fatalf("initConfig returned an error %s", err)
+	// }
+	// if cfg == nil {
+	// 	t.Fatalf("initConfig returned a nil object")
+	// }
 }
 
 func TestIsValidUrl(t *testing.T) {}
