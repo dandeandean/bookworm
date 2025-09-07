@@ -99,16 +99,16 @@ func initConfig(pathTo string) (*Config, error) {
 		return nil, err
 	}
 	if !configInfo.IsDir() {
-		return nil, errors.New("~/.config/bookworm is not a directory!")
+		return nil, errors.New("Could not find the directory " + pathTo)
 	}
 	_, err = os.Create(
-		getConfigPath(""),
+		getConfigPath(pathTo),
 	)
 	if err != nil {
 		return nil, err
 	}
 	cfg := &Config{
-		DbPath:     getDbPath(""),
+		DbPath:     getDbPath(pathTo),
 		LastOpened: "nothing... yet",
 	}
 	err = cfg.writeConfig(pathTo)

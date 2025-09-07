@@ -27,6 +27,7 @@ func TestPaths(t *testing.T) {
 func TestInitConfig(t *testing.T) {
 	pathTo := os.TempDir()
 	t.Log("Using Config Dir " + pathTo)
+	t.Log(getConfigDir(pathTo))
 	defer os.Remove(pathTo)
 
 	cfg, err := initConfig(pathTo)
