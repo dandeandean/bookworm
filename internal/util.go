@@ -12,7 +12,11 @@ import (
 )
 
 var (
-	configDir = os.Getenv("HOME") + "/.config/bookworm/"
+	configDir      = os.Getenv("HOME") + "/.config/bookworm/"
+	configFileName = "config.yml"
+	dbFileName     = "worm.db"
+	configPerms    = os.FileMode(0666)
+	dbPerms        = os.FileMode(0600)
 )
 
 type Config struct {
@@ -20,8 +24,8 @@ type Config struct {
 	LastOpened string `json:"lastopened"`
 }
 
-func (c *Config) writeConfig() error {
-	path := getConfigPath()
+func (c *Config) writeConfig(pathTo string) error {
+	path := getConfigPath(pathTo)
 	if path == "" {
 		return errors.New("the config path is not there!")
 	}
@@ -29,7 +33,7 @@ func (c *Config) writeConfig() error {
 	if err != nil {
 		panic(err)
 	}
-	err = os.WriteFile(path, yamlBytes, 0777)
+	err = os.WriteFile(path, yamlBytes, configPerms)
 	if err != nil {
 		return err
 	}
@@ -38,9 +42,9 @@ func (c *Config) writeConfig() error {
 
 // Get config from system
 // Returns an error if the Config cannot be found
-func getConfig() (*Config, error) {
+func getConfig(pathTo string) (*Config, error) {
 	var cfg Config
-	path := getConfigPath()
+	path := getConfigPath(pathTo)
 	_, err := os.Stat(path)
 	// Create the config files if they don't exist
 	if err != nil {
@@ -58,24 +62,49 @@ func getConfig() (*Config, error) {
 	return &cfg, nil
 }
 
+// Adds a slash at the end if it's not there
+// does nothing if it is there
+func withSlash(pathTo string) string {
+	if pathTo[len(pathTo)-1] != '/' &&
+		pathTo != "" {
+		return pathTo + "/"
+	}
+	return pathTo
+}
+
 // Returns the absolute path to the config file
-func getConfigPath() string {
-	return configDir + "config.yml"
+func getConfigPath(pathTo string) string {
+	if pathTo == "" {
+		return withSlash(configDir) + configFileName
+	}
+	return withSlash(pathTo) + configFileName
 }
 
 // Returns the absolute path to the db file
-func getDbPath() string {
-	return configDir + "worm.db"
+func getDbPath(pathTo string) string {
+	if pathTo == "" {
+		return withSlash(configDir) + dbFileName
+	}
+	return withSlash(pathTo) + dbFileName
+}
+
+// Returns the config dir
+// defaults to ~/.config/
+func getConfigDir(pathTo string) string {
+	if pathTo == "" {
+		return withSlash(configDir)
+	}
+	return withSlash(pathTo)
 }
 
 // Writes a new config & returns an *os.File
-// This will write to ~/.config/bookworm/config.yml
-// .. or it will blow up
-func initConfig() (*Config, error) {
-	configInfo, err := os.Stat(configDir)
+// This will write to $pathTo+config.yml
+func initConfig(pathTo string) (*Config, error) {
+	pathTo = getConfigDir(pathTo)
+	configInfo, err := os.Stat(pathTo)
 	// Create the config.yml if it's not there
 	if os.IsNotExist(err) {
-		err = os.Mkdir(configDir, 0666)
+		err = os.Mkdir(pathTo, 0666)
 		if err != nil {
 			return nil, err
 		}
@@ -84,19 +113,19 @@ func initConfig() (*Config, error) {
 		return nil, err
 	}
 	if !configInfo.IsDir() {
-		return nil, errors.New("~/.config/bookworm is not a directory!")
+		return nil, errors.New("Could not find the directory " + pathTo)
 	}
 	_, err = os.Create(
-		getConfigPath(),
+		getConfigPath(pathTo),
 	)
 	if err != nil {
 		return nil, err
 	}
 	cfg := &Config{
-		DbPath:     getDbPath(),
+		DbPath:     getDbPath(pathTo),
 		LastOpened: "nothing... yet",
 	}
-	err = cfg.writeConfig()
+	err = cfg.writeConfig(pathTo)
 	return cfg, err
 }
 
