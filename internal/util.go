@@ -12,7 +12,9 @@ import (
 )
 
 var (
-	configDir = os.Getenv("HOME") + "/.config/bookworm/"
+	configDir      = os.Getenv("HOME") + "/.config/bookworm/"
+	configFileName = "config.yml"
+	dbFileName     = "worm.db"
 )
 
 type Config struct {
@@ -61,7 +63,8 @@ func getConfig(pathTo string) (*Config, error) {
 // Adds a slash at the end if it's not there
 // does nothing if it is there
 func withSlash(pathTo string) string {
-	if pathTo[len(pathTo)] != '/' {
+	if pathTo[len(pathTo)-1] != '/' &&
+		pathTo != "" {
 		return pathTo + "/"
 	}
 	return pathTo
@@ -70,17 +73,17 @@ func withSlash(pathTo string) string {
 // Returns the absolute path to the config file
 func getConfigPath(pathTo string) string {
 	if pathTo == "" {
-		return withSlash(configDir) + "config.yml"
+		return withSlash(configDir) + configFileName
 	}
-	return withSlash(pathTo) + "config.yml"
+	return withSlash(pathTo) + configFileName
 }
 
 // Returns the absolute path to the db file
 func getDbPath(pathTo string) string {
 	if pathTo == "" {
-		return withSlash(configDir) + "worm.db"
+		return withSlash(configDir) + dbFileName
 	}
-	return withSlash(pathTo) + "worm.db"
+	return withSlash(pathTo) + dbFileName
 }
 
 // Returns the config dir

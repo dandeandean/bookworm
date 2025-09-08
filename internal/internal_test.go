@@ -22,13 +22,15 @@ func TestPaths(t *testing.T) {
 	if getConfigDir(pathTo) != pathTo {
 		t.Fatalf("Config dir is wrong")
 	}
+	if getConfigDir("") != configDir {
+		t.Fatalf("Default Config Dir is Wrong")
+	}
 }
 
 func TestInitConfig(t *testing.T) {
 	pathTo := os.TempDir()
 	defer os.Remove(pathTo)
-	t.Log("Using Config Dir " + pathTo)
-	t.Log(getConfigDir(pathTo))
+	t.Log("Using Config Dir " + getConfigDir(pathTo))
 
 	cfg, err := initConfig(pathTo)
 	if err != nil {
