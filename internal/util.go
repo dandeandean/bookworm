@@ -84,7 +84,7 @@ func getDbPath(pathTo string) string {
 }
 
 // Returns the config dir
-// defaults to conf
+// defaults to ~/.config/
 func getConfigDir(pathTo string) string {
 	if pathTo == "" {
 		return withSlash(configDir)
