@@ -33,7 +33,9 @@ It's perfect for developers, sysadmins, and anyone who prefers a keyboard-first 
 | **`completion`** | Generates shell completion scripts. | `bookworm completion bash` |
 
 ### Getting Started
-1.  **Installation:** Clone the repo & run `make build`, then move the binary into your path.
+1.  **Installation:** Clone the repo & run `make build`, then move the binary into your path (manually).
+    **Alternatively:** You can run make install & this will download the binary into your `$GOPATH/bin`.
+      Which will work if this directory is in your path already.
 2.  **Initialize:** Run `bookworm init` to set up your environment.
 3.  **Create:** Add your first bookmark with `bookworm make "Google" "https://google.com"`.
 4.  **Open:** Access it later with `bookworm open "Google"`.
