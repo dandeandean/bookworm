@@ -13,7 +13,7 @@ func (bw *BookWorm) writeBookMark(key string) error {
 	if bm == nil {
 		return errors.New("BookMark is Nil")
 	}
-	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
+	db, err := bbolt.Open(bw.Cfg.DbPath, dbPerms, &bbolt.Options{Timeout: time.Second})
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func (bw *BookWorm) deleteBookMark(key string) error {
 	if bm == nil {
 		return errors.New("BookMark is Nil")
 	}
-	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
+	db, err := bbolt.Open(bw.Cfg.DbPath, dbPerms, &bbolt.Options{Timeout: time.Second})
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (bw *BookWorm) deleteBookMark(key string) error {
 }
 
 func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
-	db, err := bbolt.Open(c.DbPath, 0600, &bbolt.Options{Timeout: time.Second})
+	db, err := bbolt.Open(c.DbPath, dbPerms, &bbolt.Options{Timeout: time.Second})
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
 }
 
 func (bw *BookWorm) _(key string) (*BookMark, error) {
-	db, err := bbolt.Open(bw.Cfg.DbPath, 0600, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
+	db, err := bbolt.Open(bw.Cfg.DbPath, dbPerms, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
 	if err != nil {
 		panic(err)
 	}

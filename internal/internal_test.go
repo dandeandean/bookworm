@@ -25,6 +25,9 @@ func TestPaths(t *testing.T) {
 	if getConfigDir("") != configDir {
 		t.Fatalf("Default Config Dir is Wrong")
 	}
+	if getConfigDir("") != configDir {
+		t.Fatalf("Default Config Dir is Wrong")
+	}
 }
 
 func TestInitConfig(t *testing.T) {
@@ -39,6 +42,7 @@ func TestInitConfig(t *testing.T) {
 	if cfg == nil {
 		t.Fatalf("initConfig returned a nil object")
 	}
+
 }
 
 func TestIsValidUrl(t *testing.T) {}

@@ -15,6 +15,8 @@ var (
 	configDir      = os.Getenv("HOME") + "/.config/bookworm/"
 	configFileName = "config.yml"
 	dbFileName     = "worm.db"
+	configPerms    = os.FileMode(0666)
+	dbPerms        = os.FileMode(0600)
 )
 
 type Config struct {
@@ -31,7 +33,7 @@ func (c *Config) writeConfig(pathTo string) error {
 	if err != nil {
 		panic(err)
 	}
-	err = os.WriteFile(path, yamlBytes, 0777)
+	err = os.WriteFile(path, yamlBytes, configPerms)
 	if err != nil {
 		return err
 	}
