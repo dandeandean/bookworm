@@ -1,5 +1,5 @@
 all:
-	go install
+	go build
 
 install:
 	go install
