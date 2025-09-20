@@ -1,4 +1,12 @@
 #!/bin/bash
 
+make install
 
-env
+
+bookworm list
+
+echo "===================="
+
+bookworm init
+
+echo "===================="

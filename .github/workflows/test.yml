@@ -16,4 +16,4 @@ jobs:
       - name: Test
         run: make test
       - name: Env
-        run: env
+        run: bash ./tests/install_test.bash
