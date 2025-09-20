@@ -102,19 +102,20 @@ func getConfigDir(pathTo string) string {
 // This will write to $pathTo+config.yml
 func initConfig(pathTo string) (*Config, error) {
 	pathTo = getConfigDir(pathTo)
-	configInfo, err := os.Stat(pathTo)
-	// Create the config.yml if it's not there
+	configDirInfo, err := os.Stat(pathTo)
+	// Create the configDir if it's not there
 	if os.IsNotExist(err) {
 		err = os.Mkdir(pathTo, dirPerms)
 		if err != nil {
 			return nil, err
 		}
+		configDirInfo, err = os.Stat(pathTo)
 	}
 	if err != nil {
 		return nil, err
 	}
-	if !configInfo.IsDir() {
-		return nil, errors.New("Could not find the directory " + pathTo)
+	if !configDirInfo.IsDir() {
+		return nil, errors.New(pathTo + " is not a directory!")
 	}
 	_, err = os.Create(
 		getConfigPath(pathTo),
