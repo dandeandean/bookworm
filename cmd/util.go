@@ -16,8 +16,12 @@ func prGetCfg(_ *cobra.Command, _ []string) error {
 	var err error
 	Bw, err = internal.Get()
 	if err != nil {
-		fmt.Println("Couldn't get Config, please run bookworm init!")
-		os.Exit(2)
+		fmt.Println("Couldn't get config!")
+		fmt.Println("Run bookworm init to initialize the config.")
+		fmt.Println("If you believe this is an error use the --verbose flag.")
+		if !verboseMode {
+			os.Exit(2)
+		}
 		return err
 	}
 	return nil

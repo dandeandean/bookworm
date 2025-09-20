@@ -10,8 +10,9 @@ import (
 
 var (
 	// Global BookWorm
-	Bw        *internal.BookWorm
-	tagFilter string
+	Bw          *internal.BookWorm
+	tagFilter   string
+	verboseMode bool
 )
 
 var rootCmd = &cobra.Command{
@@ -25,6 +26,10 @@ var rootCmd = &cobra.Command{
 			fmt.Printf("Alas, there's been an error: %v", err)
 		}
 	},
+}
+
+func init() {
+	rootCmd.PersistentFlags().BoolVarP(&verboseMode, "verbose", "v", false, "Enable verbose output")
 }
 
 func Execute() {
