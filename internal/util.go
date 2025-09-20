@@ -15,6 +15,7 @@ var (
 	configDir      = os.Getenv("HOME") + "/.config/bookworm/"
 	configFileName = "config.yml"
 	dbFileName     = "worm.db"
+	dirPerms       = os.FileMode(0700)
 	configPerms    = os.FileMode(0666)
 	dbPerms        = os.FileMode(0600)
 )
@@ -104,7 +105,7 @@ func initConfig(pathTo string) (*Config, error) {
 	configInfo, err := os.Stat(pathTo)
 	// Create the config.yml if it's not there
 	if os.IsNotExist(err) {
-		err = os.Mkdir(pathTo, 0666)
+		err = os.Mkdir(pathTo, dirPerms)
 		if err != nil {
 			return nil, err
 		}
