@@ -28,7 +28,6 @@ func prInitCfg(cmd *cobra.Command, args []string) error {
 	Bw, err = internal.Init()
 	if err != nil {
 		fmt.Println("Failed to create config!")
-		os.Exit(2)
 		return err
 	}
 	return nil
