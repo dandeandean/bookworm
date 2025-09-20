@@ -19,21 +19,35 @@ var rootCmd = &cobra.Command{
 	Use:     "bookworm",
 	Short:   "Bookworm can manage your bookmarks from the command line.",
 	PreRunE: prGetCfg,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		m := TeaModel()
 		p := tea.NewProgram(m)
 		if _, err := p.Run(); err != nil {
-			fmt.Printf("Alas, there's been an error: %v", err)
+			if verboseMode {
+				fmt.Println("Failed to run bubbletea!")
+			}
+			return err
 		}
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&verboseMode, "verbose", "v", false, "Enable verbose output")
+	rootCmd.SilenceErrors = true
+	if verboseMode {
+		rootCmd.SilenceUsage = true
+	}
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println("Something Horrible Happened!", err)
+		fmt.Println("Failed to execute the root command!")
+		if !verboseMode {
+			fmt.Println("Use the --verbose flag for more information ")
+		}
+		if verboseMode {
+			fmt.Println(err)
+		}
 	}
 }
