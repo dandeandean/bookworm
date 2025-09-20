@@ -16,8 +16,12 @@ func prGetCfg(_ *cobra.Command, _ []string) error {
 	var err error
 	Bw, err = internal.Get()
 	if err != nil {
-		fmt.Println("Couldn't get Config, please run bookworm init!")
-		os.Exit(2)
+		fmt.Println("Couldn't get config!")
+		fmt.Println("Run bookworm init to initialize the config.")
+		if !verboseMode {
+			fmt.Println("Use the --verbose flag for more information")
+			os.Exit(2)
+		}
 		return err
 	}
 	return nil
@@ -25,10 +29,14 @@ func prGetCfg(_ *cobra.Command, _ []string) error {
 
 func prInitCfg(cmd *cobra.Command, args []string) error {
 	var err error
+	if verboseMode {
+		fmt.Println("Initing config...")
+	}
 	Bw, err = internal.Init()
 	if err != nil {
-		fmt.Println("Failed to create config!")
-		os.Exit(2)
+		if verboseMode {
+			fmt.Println("Recieved error during init config:", err)
+		}
 		return err
 	}
 	return nil
