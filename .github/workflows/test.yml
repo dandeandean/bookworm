@@ -8,12 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: stable
-      - name: Test
-        run: make test
-      - name: Env
-        run: bash ./tests/install_test.bash
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: stable
+    - name: Go Tests
+      run: make test
+    - name: Test Basic Usage
+      run: bash ./tests/test_usage.bash
