@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
 )
@@ -19,10 +21,11 @@ var makeCmd = &cobra.Command{
 	ValidArgsFunction: nonCmp,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !internal.IsValidUrl(args[1]) {
-			fmt.Println(args[1] + " is not a valid URL. What are you doing?")
+			fmt.Println(args[1] + " is not a valid URL")
+			os.Exit(1)
 		}
 		err := Bw.NewBookMark(args[0], args[1], []string{})
-		if err != nil {
+		if err != nil && verboseMode {
 			fmt.Println(err)
 		}
 	},

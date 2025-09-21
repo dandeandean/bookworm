@@ -31,7 +31,12 @@ fi
 echo "===================="
 echo "Testing create new bookmark"
 
-if ! bookworm new google www.google.com ; then
+if bookworm make google foo.bar ; then
+	echo "failed to catch invalid bookmark"
+	exit 1
+fi
+
+if ! bookworm make google https://www.google.com ; then
 	echo "failed to create bookmark"
 	exit 1
 fi

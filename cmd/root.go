@@ -42,7 +42,7 @@ func init() {
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Println("Failed to execute the root command!")
+		fmt.Println("Bookworm failed!")
 		if !verboseMode {
 			fmt.Println("Use the --verbose flag for more information ")
 		}
