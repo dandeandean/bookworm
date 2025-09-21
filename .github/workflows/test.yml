@@ -16,4 +16,4 @@ jobs:
     - name: Go Tests
       run: make test
     - name: Test Basic Usage
-      run: bash $GITHUB_WORKSPACE/bookworm/tests/usage_test.bash
+      run: bash $GITHUB_WORKSPACE/tests/usage_test.bash
