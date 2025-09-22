@@ -18,11 +18,13 @@ var (
 	dirPerms       = os.FileMode(0700)
 	configPerms    = os.FileMode(0666)
 	dbPerms        = os.FileMode(0600)
+	verboseMode    = false
 )
 
 type Config struct {
-	DbPath     string `json:"dbpath"`
-	LastOpened string `json:"lastopened"`
+	DbPath         string `json:"dbpath"`
+	LastOpened     string `json:"lastopened"`
+	FzfIntegration bool   `json:"fzf"`
 }
 
 func (c *Config) writeConfig(pathTo string) error {
@@ -123,9 +125,15 @@ func initConfig(pathTo string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	var fzfThere = false
+	fzf, _ := exec.LookPath("fzf")
+	if fzf != "" {
+		fzfThere = true
+	}
 	cfg := &Config{
-		DbPath:     getDbPath(pathTo),
-		LastOpened: "nothing... yet",
+		DbPath:         getDbPath(pathTo),
+		LastOpened:     "nothing... yet",
+		FzfIntegration: fzfThere,
 	}
 	err = cfg.writeConfig(pathTo)
 	return cfg, err
