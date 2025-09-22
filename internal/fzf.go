@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 )
@@ -13,24 +15,26 @@ func (b BookWorm) FzfOpen(tagFilter string) error {
 		return err
 	}
 	fzf := exec.Command(fzfExec)
-	rPipe, wPipe, err := os.Pipe()
+	fzf.Stderr = os.Stderr
+	stdinPhony, err := fzf.StdinPipe()
 	if err != nil {
 		return err
 	}
-	defer wPipe.Close()
-	defer rPipe.Close()
-
 	for _, s := range b.ListBookMarks(tagFilter) {
-		_, err = wPipe.WriteString(s.Name)
-		if err != nil {
-			return err
-		}
+		fmt.Fprintln(stdinPhony, s.Name)
 	}
-	// This works with stdin, but not a pipe... why?
-	fzf.Stdin = rPipe //os.Stdin
 	fzfStdOut, err := fzf.Output()
 	if err != nil {
 		return err
 	}
-	return OpenURL(string(fzfStdOut))
+	bm := b.GetBookMark(string(fzfStdOut))
+	if bm == nil {
+		// The line ending doesn't work... sometimes
+		bm = b.GetBookMark(string(fzfStdOut[:len(fzfStdOut)-1]))
+		if bm == nil {
+			return errors.New("Bookmark not in bookworm & newline trick didn't work")
+		}
+	}
+	return OpenURL(bm.Link)
 }
+
