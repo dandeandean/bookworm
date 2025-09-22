@@ -9,6 +9,10 @@ on:
     - '!**.tf'
   pull_request:
     branches: [ "main" ]
+    paths:
+    - '!**.md'
+    - '!**.yml'
+    - '!**.tf'
 
 jobs:
 

@@ -1,0 +1,25 @@
+name: publish_binaries
+
+on:
+  push:
+    branches: 
+    - "main"
+    - "*"
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: stable
+    - name: Build
+      env:
+        # We don't want the binary to dynamically link
+        CGO_ENABLED: 0
+      run: go build -ldflags="-s -w" ./...
