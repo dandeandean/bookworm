@@ -13,7 +13,7 @@ echo "===================="
 
 echo "Testing pre-init"
 
-bookworm
+bookworm >/dev/null
 
 if [[ $? != 2 ]]; then
 	exit 1
@@ -23,7 +23,7 @@ echo "===================="
 
 echo "Testing init"
 
-if ! bookworm init; then
+if ! bookworm init >/dev/null; then
 	echo "failed to init"
 	exit 1
 fi
@@ -31,12 +31,12 @@ fi
 echo "===================="
 echo "Testing create new bookmark"
 
-if bookworm make google foo.bar ; then
+if bookworm make google foo.bar >/dev/null; then
 	echo "failed to catch invalid bookmark"
 	exit 1
 fi
 
-if ! bookworm make google https://www.google.com ; then
+if ! bookworm make google https://www.google.com >/dev/null; then
 	echo "failed to create bookmark"
 	exit 1
 fi
@@ -46,4 +46,4 @@ if ! bookworm ls | grep -q "google"; then
 	exit 1
 fi
 
-
+echo "Passed!"
