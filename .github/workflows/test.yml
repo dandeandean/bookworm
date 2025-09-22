@@ -2,7 +2,7 @@ name: go-test
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -13,5 +13,7 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: stable
-    - name: Test
+    - name: Go Tests
       run: make test
+    - name: Test Basic Usage
+      run: bash $GITHUB_WORKSPACE/tests/usage_test.bash
