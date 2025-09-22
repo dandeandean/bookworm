@@ -20,13 +20,17 @@ var rootCmd = &cobra.Command{
 	Short:   "Bookworm can manage your bookmarks from the command line.",
 	PreRunE: prGetCfg,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		m := TeaModel()
-		p := tea.NewProgram(m)
-		if _, err := p.Run(); err != nil {
-			if verboseMode {
-				fmt.Println("Failed to run bubbletea!")
+		if Bw.Cfg.FzfIntegration {
+			return Bw.FzfOpen("")
+		} else {
+			m := TeaModel()
+			p := tea.NewProgram(m)
+			if _, err := p.Run(); err != nil {
+				if verboseMode {
+					fmt.Println("Failed to run bubbletea!")
+				}
+				return err
 			}
-			return err
 		}
 		return nil
 	},
