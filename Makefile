@@ -12,3 +12,6 @@ test:
 
 docker:
 	docker build -f ./build/Dockerfile . -t bookworm
+
+nix:
+	nix-bulid build/

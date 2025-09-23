@@ -3,11 +3,12 @@
   lib ? import <nixpkgs/lib>,
 }:
 let
-  bwVersion = "0.0.1";
-  # https://nix.dev/tutorials/working-with-local-files.html#id8
+  bwVersion = "0.0.0";
   fs = lib.fileset;
+  srcDir = ../.;
   sourceFiles = fs.unions [
-    (fs.fileFilter (file: file.hasExt "go" || file.hasExt "mod" || file.hasExt "sum") ./.)
+    # https://nix.dev/tutorials/working-with-local-files.html#id8
+    (fs.fileFilter (file: file.hasExt "go" || file.hasExt "mod" || file.hasExt "sum") srcDir)
   ];
 in
 fs.trace sourceFiles pkgs.stdenv.mkDerivation {
@@ -17,7 +18,7 @@ fs.trace sourceFiles pkgs.stdenv.mkDerivation {
   pname = "bookworm";
   version = bwVersion;
   src = fs.toSource {
-    root = ./.;
+    root = srcDir;
     fileset = sourceFiles;
   };
   installPhase = ''
