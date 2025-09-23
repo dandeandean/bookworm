@@ -5,7 +5,10 @@ install:
 	go install
 
 build:
-	go build
+	go build . -o bookworm
 
 test:
 	go test ./... -v
+
+docker:
+	docker build -f ./build/Dockerfile . -t bookworm
