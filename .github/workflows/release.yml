@@ -22,4 +22,9 @@ jobs:
       env:
         # We don't want the binary to dynamically link
         CGO_ENABLED: 0
-      run: go build -ldflags="-s -w" ./...
+      run: go build -ldflags="-s -w" -o bookworm-${{ matrix.os }} .
+    - name: Upload Binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: bookworm binary for ${{ matrix.os }}
+        path: $GITHUB_WORKSPACE/bookworm-${{ matrix.os }}
