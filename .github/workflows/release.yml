@@ -27,4 +27,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bookworm binary for ${{ matrix.os }}
-        path: $GITHUB_WORKSPACE/bookworm-${{ matrix.os }}
+        path: bookworm-${{ matrix.os }}
