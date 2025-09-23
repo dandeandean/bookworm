@@ -23,7 +23,7 @@ fs.trace sourceFiles pkgs.stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/bin
     mkdir -p $out/.go-mod-cache
-    export GOMODCACHE=$out/.go-mod-cache 
+    # Without this, we get a strange error about a homeless shelter
     export HOME=$out
     go mod download
     go build .
