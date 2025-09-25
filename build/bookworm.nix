@@ -29,6 +29,5 @@ fs.trace sourceFiles pkgs.stdenv.mkDerivation {
     go mod download
     go build .
     cp bookworm $out/bin
-    echo "BUILDING"
   '';
 }
