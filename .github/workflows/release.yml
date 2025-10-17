@@ -31,7 +31,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bookworm binary for ${{ matrix.os }}
-        path: bookworm-${{ matrix.os }}
+        path: binaries
 
   release:
     if: ${{ ! startsWith(github.ref, 'refs/tags/v[0-9]+.[0-9]+.[0-9]+') }}
@@ -39,5 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: binaries
+        path: ./binaries/
     - run: |
-        echo "hello world"
+        ls ./binaries
