@@ -33,7 +33,7 @@ jobs:
     - name: Upload Binaries
       uses: actions/upload-artifact@v4
       with:
-        name: bookworm binary for ${{ matrix.os }}
+        name: bookworm-${{ matrix.os }}
         path: bookworm-${{ matrix.os }}
 
   release:
@@ -47,4 +47,11 @@ jobs:
       with:
         path: binaries
     - run: |
-        ls -la
+        ls -la binaries
+    - name: Create a Release
+      uses: elgohr/Github-Release-Action@v5
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        title: Test Release
+        workdir: binaries
