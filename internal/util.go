@@ -18,7 +18,7 @@ var (
 	dirPerms       = os.FileMode(0700)
 	configPerms    = os.FileMode(0666)
 	dbPerms        = os.FileMode(0600)
-	verboseMode    = false
+	verboseMode    = os.Getenv("BW_VERBOSE") == "true"
 )
 
 type Config struct {
