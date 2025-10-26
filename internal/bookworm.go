@@ -84,10 +84,12 @@ func (w *BookWorm) DeleteBookMark(name string) error {
 
 // TODO: change signature of this func to return error
 func (w *BookWorm) GetBookMark(name string) *BookMark {
+	printIfVerbose(w)
 	bmRaw, err := w.GetOneRaw(name)
 	if err != nil {
 		panic(err)
 	}
+	printIfVerbose(string(bmRaw))
 	bm, err := bytesToBookMark(bmRaw)
 	if err != nil {
 		panic(err)

@@ -27,7 +27,9 @@ func (b BookWorm) FzfOpen(tagFilter string) error {
 	if err != nil {
 		return err
 	}
-	bm := b.GetBookMark(string(fzfStdOut))
+	strFzfStdOut := string(fzfStdOut)
+	printIfVerbose(strFzfStdOut)
+	bm := b.GetBookMark(strFzfStdOut)
 	if bm == nil {
 		// The line ending doesn't work... sometimes
 		bm = b.GetBookMark(string(fzfStdOut[:len(fzfStdOut)-1]))
