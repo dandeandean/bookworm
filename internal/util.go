@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"runtime"
@@ -27,6 +28,13 @@ type Config struct {
 	FzfIntegration bool   `json:"fzf"`
 }
 
+func printIfVerbose(a ...any) (int, error) {
+	if verboseMode {
+		fmt.Println(a...)
+	}
+	return 0, nil
+}
+
 func (c *Config) writeConfig(pathTo string) error {
 	path := getConfigPath(pathTo)
 	if path == "" {
@@ -48,6 +56,7 @@ func (c *Config) writeConfig(pathTo string) error {
 func getConfig(pathTo string) (*Config, error) {
 	var cfg Config
 	path := getConfigPath(pathTo)
+	printIfVerbose("getting config from path", path)
 	_, err := os.Stat(path)
 	// Create the config files if they don't exist
 	if err != nil {
@@ -104,6 +113,7 @@ func getConfigDir(pathTo string) string {
 // This will write to $pathTo+config.yml
 func initConfig(pathTo string) (*Config, error) {
 	pathTo = getConfigDir(pathTo)
+	printIfVerbose("init db with path", pathTo)
 	configDirInfo, err := os.Stat(pathTo)
 	// Create the configDir if it's not there
 	if os.IsNotExist(err) {

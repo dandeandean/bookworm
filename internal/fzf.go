@@ -36,8 +36,6 @@ func (b BookWorm) FzfOpen(tagFilter string) error {
 		}
 	}
 	err = OpenURL(bm.Link)
-	if verboseMode {
-		fmt.Println(bm.Link)
-	}
+	printIfVerbose(bm.Link)
 	return err
 }
