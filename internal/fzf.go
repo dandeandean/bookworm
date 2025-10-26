@@ -35,6 +35,7 @@ func (b BookWorm) FzfOpen(tagFilter string) error {
 			return errors.New("Bookmark not in bookworm & newline trick didn't work")
 		}
 	}
-	return OpenURL(bm.Link)
+	err = OpenURL(bm.Link)
+	printIfVerbose(bm.Link)
+	return err
 }
-

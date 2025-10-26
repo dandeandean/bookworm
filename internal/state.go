@@ -22,6 +22,7 @@ func (bw *BookWorm) writeBookMark(key string) error {
 	if err != nil {
 		return err
 	}
+	printIfVerbose("writing: ", string(buf))
 	err = db.Update(func(tx *bbolt.Tx) error {
 		bookMarksBucket, err := tx.CreateBucketIfNotExists([]byte("bookmarks"))
 		if err != nil {
