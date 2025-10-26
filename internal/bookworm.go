@@ -44,7 +44,13 @@ func Init() (*BookWorm, error) {
 	}, nil
 }
 
-// Registister Config writes all of the changes to the Config
+func (w *BookWorm) GetAllRaw() (map[string][]byte, error) {
+	return readAll(w.Cfg.DbPath)
+}
+
+func (w *BookWorm) GetOneRaw(key string) ([]byte, error) {
+	return readOne(w.Cfg.DbPath, key)
+}
 
 func (w *BookWorm) SetLastOpened(bm BookMark) error {
 	w.Cfg.LastOpened = bm.Link
