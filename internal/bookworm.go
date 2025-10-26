@@ -84,15 +84,15 @@ func (w *BookWorm) DeleteBookMark(name string) error {
 
 // TODO: change signature of this func to return error
 func (w *BookWorm) GetBookMark(name string) *BookMark {
-	printIfVerbose(w)
 	bmRaw, err := w.GetOneRaw(name)
 	if err != nil {
-		panic(err)
+		printIfVerbose(err)
+		return nil
 	}
-	printIfVerbose(string(bmRaw))
 	bm, err := bytesToBookMark(bmRaw)
 	if err != nil {
-		panic(err)
+		printIfVerbose(err)
+		return nil
 	}
 	return bm
 }
@@ -101,7 +101,8 @@ func (w *BookWorm) GetBookMark(name string) *BookMark {
 func (w *BookWorm) ListBookMarks(tagFilter string) []*BookMark {
 	allBookMarks, err := w.Cfg.enumBookMarks()
 	if err != nil {
-		panic(err)
+		printIfVerbose(err)
+		return nil
 	}
 	out := make([]*BookMark, 0)
 	for _, b := range allBookMarks {
@@ -115,7 +116,8 @@ func (w *BookWorm) ListBookMarks(tagFilter string) []*BookMark {
 func (w *BookWorm) LenBookMarks() int {
 	allBookMarks, err := w.Cfg.enumBookMarks()
 	if err != nil {
-		panic(err)
+		printIfVerbose(err)
+		return 0
 	}
 	return len(allBookMarks)
 }
