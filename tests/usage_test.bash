@@ -46,4 +46,9 @@ if ! bookworm ls | grep -q "google"; then
 	exit 1
 fi
 
+if ! bookworm export google | jq; then
+	echo "Couldn't find google in the bookmarks"
+	exit 1
+fi
+
 echo "Passed!"
