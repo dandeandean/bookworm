@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
@@ -25,6 +26,19 @@ var exportCmd = &cobra.Command{
 	PreRunE:           prGetCfg,
 	ValidArgsFunction: getNamesCmp,
 	Run: func(cmd *cobra.Command, args []string) {
+		action := func(bytes []byte, err error) {
+			if err != nil {
+				panic("Error with reading the JSON data")
+			}
+			if outFile == "" {
+				fmt.Print(string(bytes))
+				return
+			}
+			err = os.WriteFile(outFile, bytes, 0666)
+			if err != nil {
+				panic("Error writing the file to disk")
+			}
+		}
 		switch len(args) {
 		case 0:
 			bytes, err := Bw.GetAllRaw()
@@ -37,17 +51,9 @@ var exportCmd = &cobra.Command{
 				json.Unmarshal(v, bmCask)
 				strBM[k] = *bmCask
 			}
-			encoded, err := json.Marshal(strBM)
-			if err != nil {
-				panic(err)
-			}
-			fmt.Print(string(encoded))
+			action(json.Marshal(strBM))
 		case 1:
-			bytes, err := Bw.GetOneRaw(args[0])
-			if err != nil {
-				panic(err)
-			}
-			fmt.Print(string(bytes))
+			action(Bw.GetOneRaw(args[0]))
 		}
 	},
 }
