@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dandeandean/bookworm/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -30,11 +31,17 @@ var exportCmd = &cobra.Command{
 			if err != nil {
 				panic(err)
 			}
-			encoded, err := json.Marshal(bytes)
+			strBM := make(map[string]internal.BookMark)
+			for k, v := range bytes {
+				bmCask := &internal.BookMark{}
+				json.Unmarshal(v, bmCask)
+				strBM[k] = *bmCask
+			}
+			encoded, err := json.Marshal(strBM)
 			if err != nil {
 				panic(err)
 			}
-			fmt.Println(string(encoded))
+			fmt.Print(string(encoded))
 		case 1:
 			bytes, err := Bw.GetOneRaw(args[0])
 			if err != nil {
