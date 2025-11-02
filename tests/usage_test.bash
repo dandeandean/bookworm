@@ -46,4 +46,14 @@ if ! bookworm ls | grep -q "google"; then
 	exit 1
 fi
 
+if ! bookworm export google | jq; then
+	echo "Couldn't convert google to json"
+	exit 1
+fi
+
+if ! bookworm export | jq; then
+	echo "Couldn't export all to json"
+	exit 1
+fi
+
 echo "Passed!"

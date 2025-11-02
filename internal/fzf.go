@@ -27,9 +27,12 @@ func (b BookWorm) FzfOpen(tagFilter string) error {
 	if err != nil {
 		return err
 	}
-	bm := b.GetBookMark(string(fzfStdOut))
+	strFzfStdOut := string(fzfStdOut)
+	printIfVerbose(strFzfStdOut)
+	bm := b.GetBookMark(strFzfStdOut)
 	if bm == nil {
 		// The line ending doesn't work... sometimes
+		printIfVerbose("bookmark is nil, trying", string(fzfStdOut[:len(fzfStdOut)-1]))
 		bm = b.GetBookMark(string(fzfStdOut[:len(fzfStdOut)-1]))
 		if bm == nil {
 			return errors.New("Bookmark not in bookworm & newline trick didn't work")

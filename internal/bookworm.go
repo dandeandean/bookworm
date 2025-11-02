@@ -44,7 +44,13 @@ func Init() (*BookWorm, error) {
 	}, nil
 }
 
-// Registister Config writes all of the changes to the Config
+func (w *BookWorm) GetAllRaw() (map[string][]byte, error) {
+	return readAll(w.Cfg.DbPath)
+}
+
+func (w *BookWorm) GetOneRaw(key string) ([]byte, error) {
+	return readOne(w.Cfg.DbPath, key)
+}
 
 func (w *BookWorm) SetLastOpened(bm BookMark) error {
 	w.Cfg.LastOpened = bm.Link
@@ -76,13 +82,30 @@ func (w *BookWorm) DeleteBookMark(name string) error {
 	return w.deleteBookMark(name)
 }
 
+// TODO: change signature of this func to return error
 func (w *BookWorm) GetBookMark(name string) *BookMark {
-	return w.BookMarks[name]
+	bmRaw, err := w.GetOneRaw(name)
+	if err != nil {
+		printIfVerbose(err)
+		return nil
+	}
+	bm, err := bytesToBookMark(bmRaw)
+	if err != nil {
+		printIfVerbose(err)
+		return nil
+	}
+	return bm
 }
 
+// TODO: change signature of this func to return error
 func (w *BookWorm) ListBookMarks(tagFilter string) []*BookMark {
+	allBookMarks, err := w.Cfg.enumBookMarks()
+	if err != nil {
+		printIfVerbose(err)
+		return nil
+	}
 	out := make([]*BookMark, 0)
-	for _, b := range w.BookMarks {
+	for _, b := range allBookMarks {
 		if slices.Contains(b.Tags, tagFilter) || tagFilter == "" {
 			out = append(out, b)
 		}
@@ -91,5 +114,10 @@ func (w *BookWorm) ListBookMarks(tagFilter string) []*BookMark {
 }
 
 func (w *BookWorm) LenBookMarks() int {
-	return len(w.BookMarks)
+	allBookMarks, err := w.Cfg.enumBookMarks()
+	if err != nil {
+		printIfVerbose(err)
+		return 0
+	}
+	return len(allBookMarks)
 }

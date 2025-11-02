@@ -54,23 +54,10 @@ func (bw *BookWorm) deleteBookMark(key string) error {
 }
 
 func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
-	db, err := bbolt.Open(c.DbPath, dbPerms, &bbolt.Options{Timeout: time.Second})
+	bmsRaw, err := readAll(c.DbPath)
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
-	bmsRaw := make(map[string][]byte)
-	db.View(func(tx *bbolt.Tx) error {
-		bookMarksBucket := tx.Bucket([]byte("bookmarks"))
-		if bookMarksBucket == nil {
-			return err
-		}
-		c := bookMarksBucket.Cursor()
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			bmsRaw[string(k)] = v
-		}
-		return nil
-	})
 	bookmarks := make(map[string]*BookMark)
 	for k, v := range bmsRaw {
 		b, err := bytesToBookMark(v)
@@ -82,8 +69,8 @@ func (c *Config) enumBookMarks() (map[string]*BookMark, error) {
 	return bookmarks, nil
 }
 
-func (bw *BookWorm) _(key string) (*BookMark, error) {
-	db, err := bbolt.Open(bw.Cfg.DbPath, dbPerms, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
+func readOne(dbPath, key string) ([]byte, error) {
+	db, err := bbolt.Open(dbPath, dbPerms, &bbolt.Options{ReadOnly: true, Timeout: time.Second})
 	if err != nil {
 		panic(err)
 	}
@@ -102,5 +89,26 @@ func (bw *BookWorm) _(key string) (*BookMark, error) {
 		return nil, err
 	}
 
-	return bytesToBookMark(buf)
+	return buf, nil
+}
+
+func readAll(dbPath string) (map[string][]byte, error) {
+	db, err := bbolt.Open(dbPath, dbPerms, &bbolt.Options{Timeout: time.Second})
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	bmsRaw := make(map[string][]byte)
+	db.View(func(tx *bbolt.Tx) error {
+		bookMarksBucket := tx.Bucket([]byte("bookmarks"))
+		if bookMarksBucket == nil {
+			return err
+		}
+		c := bookMarksBucket.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			bmsRaw[string(k)] = v
+		}
+		return nil
+	})
+	return bmsRaw, nil
 }
