@@ -171,6 +171,11 @@ func OpenURL(url string) error {
 			args = []string{url}
 		}
 	}
+
+	_, err := exec.LookPath(cmd)
+	if err != nil {
+		return errors.New("No Executable to open in browser.")
+	}
 	if len(args) > 1 {
 		// args[0] is used for 'start' command argument, to prevent issues with URLs starting with a quote
 		args = append(args[:1], append([]string{""}, args[1:]...)...)
