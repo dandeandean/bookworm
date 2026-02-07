@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"runtime"
@@ -194,9 +195,9 @@ func isWSL() bool {
 }
 
 // This is going to need a lot of work
-func IsValidUrl(url string) bool {
-	return strings.Contains(url, "https://") ||
-		strings.Contains(url, "http://")
+func IsValidUrl(rl string) bool {
+	_, err := url.ParseRequestURI(rl)
+	return err == nil
 }
 
 func bytesToBookMark(buf []byte) (*BookMark, error) {
