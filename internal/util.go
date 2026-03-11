@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"runtime"
@@ -171,6 +172,11 @@ func OpenURL(url string) error {
 			args = []string{url}
 		}
 	}
+
+	_, err := exec.LookPath(cmd)
+	if err != nil {
+		return errors.New("No Executable to open in browser.")
+	}
 	if len(args) > 1 {
 		// args[0] is used for 'start' command argument, to prevent issues with URLs starting with a quote
 		args = append(args[:1], append([]string{""}, args[1:]...)...)
@@ -189,9 +195,9 @@ func isWSL() bool {
 }
 
 // This is going to need a lot of work
-func IsValidUrl(url string) bool {
-	return strings.Contains(url, "https://") ||
-		strings.Contains(url, "http://")
+func IsValidUrl(rl string) bool {
+	_, err := url.ParseRequestURI(rl)
+	return err == nil
 }
 
 func bytesToBookMark(buf []byte) (*BookMark, error) {

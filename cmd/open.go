@@ -25,7 +25,10 @@ var openCmd = &cobra.Command{
 		}
 		err := internal.OpenURL(bm.Link)
 		if err != nil {
-			panic(err)
+			fmt.Println("Failed to open link")
+			if verboseMode {
+				fmt.Println("Got error: ", err)
+			}
 		}
 		Bw.SetLastOpened(*bm)
 	},
